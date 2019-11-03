@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace AkkaNetCore.Controllers
 {
@@ -10,10 +8,21 @@ namespace AkkaNetCore.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private readonly ILogger logger;
+
+        public ValuesController(ILogger<ValuesController> _logger)
+        {
+            logger = _logger;
+        }
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            // 로깅 테스트
+            logger.LogDebug("이것은 디버깅용입니다.");
+            logger.LogInformation("이것은 정보용입니다.");
+            logger.LogError("이것은 에러용도입니다.");
             return new string[] { "value1", "value2" };
         }
 
