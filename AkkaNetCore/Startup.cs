@@ -1,10 +1,16 @@
 ﻿using System;
+using Akka.Actor;
+using Akka.Routing;
+using AkkaNetCore.Actors;
+using AkkaNetCore.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using Swashbuckle.AspNetCore.Swagger;
+using static AkkaNetCore.Actors.ActorProviders;
 
 namespace AkkaNetCore
 {
@@ -27,6 +33,17 @@ namespace AkkaNetCore
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
+            // *** Akka Service Setting
+
+            var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            services.AddAkka("AkkaNetCore", AkkaConfig.Load(envName) );
+
+            services.AddAkkaActor<PrinterActorProvider>((provider, actorFactory) =>
+            {
+                var printerActor = actorFactory.ActorOf(Props.Create(() => new PrinterActor()).WithRouter(new RoundRobinPool(1)));
+                return () => printerActor;
+            });
+            
             // Swagger
             services.AddSwaggerGen(options =>
             {
@@ -55,7 +72,7 @@ namespace AkkaNetCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
             app.UseSwagger();
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
@@ -70,8 +87,22 @@ namespace AkkaNetCore
             {
                 app.UseDeveloperExceptionPage();
             }
+            
+            app.UseHttpsRedirection()
+                .UseMvc()
+                .UseAkka(lifetime, typeof(PrinterActorProvider));
 
-            app.UseMvc();
+            //APP Life Cycle
+            lifetime.ApplicationStarted.Register(() =>
+            {
+                app.ApplicationServices.GetService<ILogger>();
+                app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET                
+            });
+            lifetime.ApplicationStopping.Register(() =>
+            {
+                app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
+            });
+
         }
     }
 }
