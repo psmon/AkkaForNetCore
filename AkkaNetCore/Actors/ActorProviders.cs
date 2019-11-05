@@ -9,5 +9,7 @@ namespace AkkaNetCore.Actors
     public class ActorProviders
     {
         public delegate IActorRef PrinterActorProvider();
+
+        public delegate IActorRef TonerActorProvider();
     }
 }

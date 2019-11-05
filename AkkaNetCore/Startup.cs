@@ -40,10 +40,19 @@ namespace AkkaNetCore
 
             services.AddAkkaActor<PrinterActorProvider>((provider, actorFactory) =>
             {
-                var printerActor = actorFactory.ActorOf(Props.Create(() => new PrinterActor()).WithRouter(new RoundRobinPool(1)));
+                var printerActor = actorFactory.ActorOf(Props.Create(() => new PrinterActor()).WithRouter(new RoundRobinPool(1))
+                    ,"printer");
                 return () => printerActor;
             });
-            
+
+            services.AddAkkaActor<TonerActorProvider>((provider, actorFactory) =>
+            {
+                var tonerActor = actorFactory.ActorOf(Props.Create(() => new TonerActor()).WithRouter(new RoundRobinPool(1))
+                    , "toner");
+                return () => tonerActor;
+            });
+
+
             // Swagger
             services.AddSwaggerGen(options =>
             {
@@ -90,7 +99,8 @@ namespace AkkaNetCore
             
             app.UseHttpsRedirection()
                 .UseMvc()
-                .UseAkka(lifetime, typeof(PrinterActorProvider));
+                .UseAkka(lifetime, typeof(PrinterActorProvider))
+                .UseAkka(lifetime, typeof(TonerActorProvider));
 
             //APP Life Cycle
             lifetime.ApplicationStarted.Register(() =>
