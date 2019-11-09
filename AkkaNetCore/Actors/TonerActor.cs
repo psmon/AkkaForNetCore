@@ -25,8 +25,17 @@ namespace AkkaNetCore.Actors
                 {
                     //송신자 에게 이야기하기
                     Sender.Tell("토너가 모두 소모되었습니다.");
+                    logger.Warning("토너 소진,토너를 충전하라");
                 }
                 tonerAmount -= usageAmount;                
+            });
+
+            ReceiveAsync<string>(async msg =>
+            {
+                if (msg == "남은용량?")
+                {
+                    Sender.Tell($"남은 용량은 {tonerAmount} 입니다.");
+                }
             });
         }
     }
