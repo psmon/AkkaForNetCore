@@ -40,11 +40,11 @@ namespace AkkaNetCore
 
             services.AddAkkaActor<PrinterActorProvider>((provider, actorFactory) =>
             {
-                //var printerActor = actorFactory.ActorOf(Props.Create(() => new PrinterActor()).WithRouter(new RoundRobinPool(5)),
-                //    "printer-pool");
-
-                var printerActor = actorFactory.ActorOf(Props.Create<PrinterActor>().WithRouter(FromConfig.Instance),
+                var printerActor = actorFactory.ActorOf(Props.Create<PrinterActor>()
+                    .WithDispatcher("custom-dispatcher")
+                    .WithRouter(FromConfig.Instance).WithDispatcher("custom-task-dispatcher"),
                     "printer-pool");
+
                 return () => printerActor;
             });
 
