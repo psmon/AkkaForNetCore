@@ -40,19 +40,21 @@ namespace AkkaNetCore
 
             services.AddAkkaActor<PrinterActorProvider>((provider, actorFactory) =>
             {
-                var printerActor = actorFactory.ActorOf(Props.Create(() => new PrinterActor()).WithRouter(new RoundRobinPool(1))
-                    ,"printer");
+                //var printerActor = actorFactory.ActorOf(Props.Create(() => new PrinterActor()).WithRouter(new RoundRobinPool(5)),
+                //    "printer-pool");
+
+                var printerActor = actorFactory.ActorOf(Props.Create<PrinterActor>().WithRouter(FromConfig.Instance),
+                    "printer-pool");
                 return () => printerActor;
             });
 
             services.AddAkkaActor<TonerActorProvider>((provider, actorFactory) =>
             {
-                var tonerActor = actorFactory.ActorOf(Props.Create(() => new TonerActor()).WithRouter(new RoundRobinPool(1))
-                    , "toner");
+                var tonerActor = actorFactory.ActorOf(Props.Create(() => new TonerActor()).WithRouter(new RoundRobinPool(1)),
+                    "toner");
                 return () => tonerActor;
             });
-
-
+            
             // Swagger
             services.AddSwaggerGen(options =>
             {
