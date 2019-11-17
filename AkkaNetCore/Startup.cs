@@ -54,7 +54,23 @@ namespace AkkaNetCore
                     "toner");
                 return () => tonerActor;
             });
-            
+
+            services.AddAkkaActor<HigPassGateActorProvider>((provider, actorFactory) =>
+            {
+                var actor = actorFactory.ActorOf(Props.Create<HigPassGateActor>()
+                    .WithDispatcher("fast-dispatcher")
+                    .WithRouter(FromConfig.Instance), "highpass-gate-pool");
+                return () => actor;
+            });
+
+            services.AddAkkaActor<CashGateActorProvider>((provider, actorFactory) =>
+            {
+                var actor = actorFactory.ActorOf(Props.Create<CashGateActor>()
+                    .WithDispatcher("slow-dispatcher")
+                    .WithRouter(FromConfig.Instance), "cashpass-gate-pool");
+                return () => actor;
+            });
+
             // Swagger
             services.AddSwaggerGen(options =>
             {
@@ -79,7 +95,10 @@ namespace AkkaNetCore
                 var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
                 options.IncludeXmlComments(xmlPath);
             });
-            
+
+            // API주소룰 소문자로...
+            services.AddRouting(options => options.LowercaseUrls = true);
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -102,7 +121,9 @@ namespace AkkaNetCore
             app.UseHttpsRedirection()
                 .UseMvc()
                 .UseAkka(lifetime, typeof(PrinterActorProvider))
-                .UseAkka(lifetime, typeof(TonerActorProvider));
+                .UseAkka(lifetime, typeof(TonerActorProvider))
+                .UseAkka(lifetime, typeof(HigPassGateActorProvider))
+                .UseAkka(lifetime, typeof(CashGateActorProvider));
 
             //APP Life Cycle
             lifetime.ApplicationStarted.Register(() =>

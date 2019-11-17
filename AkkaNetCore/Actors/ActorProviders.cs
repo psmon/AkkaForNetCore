@@ -11,5 +11,10 @@ namespace AkkaNetCore.Actors
         public delegate IActorRef PrinterActorProvider();
 
         public delegate IActorRef TonerActorProvider();
+
+        public delegate IActorRef HigPassGateActorProvider();
+
+        public delegate IActorRef CashGateActorProvider();
+
     }
 }
