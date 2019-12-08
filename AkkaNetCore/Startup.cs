@@ -65,7 +65,7 @@ namespace AkkaNetCore
 
             services.AddAkkaActor<CashGateActorProvider>((provider, actorFactory) =>
             {
-                var actor = actorFactory.ActorOf(Props.Create<CashGateActor>()
+                var actor = actorFactory.ActorOf(Props.Create<CashGateActor>(0)
                     .WithDispatcher("slow-dispatcher")
                     .WithRouter(FromConfig.Instance), "cashpass-gate-pool");
                 return () => actor;
