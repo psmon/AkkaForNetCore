@@ -34,15 +34,17 @@ namespace AkkaNetCore.Controllers
         }
         
         [HttpPost("/gate/highpassgate")]
-        public void Highpassgate([FromBody] string value)
+        public void Highpassgate(string value,int count)
         {
-            highPassActor.Tell(value);
+            for(int i=0;i<count;i++)
+                highPassActor.Tell(value);
         }
         
         [HttpPost("/gate/cashgate")]
-        public void Cashgate([FromBody] string value)
+        public void Cashgate(string value, int count)
         {
-            cashPassActor.Tell(value);
+            for (int i = 0; i < count; i++)
+                cashPassActor.Tell(value);
         }
         
     }

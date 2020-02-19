@@ -8,17 +8,20 @@ namespace AkkaNetCore.Actors
     {
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private readonly string id;
+        private int msgCnt;
 
         public HigPassGateActor()
         {
             id = Guid.NewGuid().ToString();
             logger.Info($"하이패스 액터 생성:{id}");
-
+            msgCnt = 0;
 
             ReceiveAsync<string>(async msg =>
             {
                 //하이패스는 그냥 지나가면됨
-                logger.Debug($"{msg}");
+                if( (msgCnt % 100) == 0)
+                    logger.Debug($"{msg}-{msgCnt}");
+                msgCnt++;
             });
         }
 
