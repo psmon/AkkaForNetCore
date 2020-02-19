@@ -25,8 +25,7 @@ namespace AkkaNetCore.Actors
                 
                 Context.IncrementCounter("akka.custom.metric1");
 
-
-                Context.Gauge("akka.messageboxsize", random.Next(1, 10));
+                Context.Gauge("akka.messageboxsize", random.Next(1, 10) );
                 //하이패스는 그냥 지나가면됨
                 if ( (msgCnt % 100) == 0)
                 {

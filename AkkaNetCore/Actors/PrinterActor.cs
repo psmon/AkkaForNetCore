@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
+using Akka.Monitoring;
 using AkkaNetCore.Models.Actor;
 
 namespace AkkaNetCore.Actors

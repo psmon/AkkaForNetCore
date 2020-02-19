@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
+using Akka.Monitoring;
 
 namespace AkkaNetCore.Actors
 {
@@ -21,6 +22,10 @@ namespace AkkaNetCore.Actors
 
             ReceiveAsync<string>(async msg =>
             {
+                Context.IncrementMessagesReceived();
+
+                Context.IncrementCounter("akka.custom.metric2");
+
                 //랜덤 Delay를 줌
                 int auto_delay = delay==0 ? rnd.Next(300,1000) : delay;
                 await Task.Delay(auto_delay);
@@ -31,6 +36,17 @@ namespace AkkaNetCore.Actors
 
                 msgCnt++;
             });
-        }        
+        }
+
+        protected override void PreStart()
+        {
+            Context.IncrementActorCreated();
+        }
+
+        protected override void PostStop()
+        {
+            Context.IncrementActorStopped();
+        }
+
     }
 }
