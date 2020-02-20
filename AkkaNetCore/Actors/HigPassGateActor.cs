@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.Cluster;
 using Akka.Event;
 using Akka.Monitoring;
 
@@ -11,6 +12,7 @@ namespace AkkaNetCore.Actors
         private readonly string id;
         private int msgCnt;
         private Random random;
+        protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
         public HigPassGateActor()
         {
@@ -37,11 +39,16 @@ namespace AkkaNetCore.Actors
 
         protected override void PreStart()
         {
+            // subscribe to IMemberEvent and UnreachableMember events
+            Cluster.Subscribe(Self, ClusterEvent.InitialStateAsEvents,
+                new[] { typeof(ClusterEvent.IMemberEvent), typeof(ClusterEvent.UnreachableMember) });
+
             Context.IncrementActorCreated();
         }
 
         protected override void PostStop()
         {
+            Cluster.Unsubscribe(Self);
             Context.IncrementActorStopped();
         }
 

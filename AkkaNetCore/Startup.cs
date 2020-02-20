@@ -59,7 +59,7 @@ namespace AkkaNetCore
             {
                 var actor = actorFactory.ActorOf(Props.Create<HigPassGateActor>()
                     .WithDispatcher("fast-dispatcher")
-                    .WithRouter(FromConfig.Instance), "highpass-gate-pool");
+                    .WithRouter(FromConfig.Instance), "highpass-roundrobin");
                 return () => actor;
             });
 

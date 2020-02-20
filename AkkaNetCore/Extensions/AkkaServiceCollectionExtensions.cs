@@ -25,7 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 var actorSystem = provider.GetService<ActorSystem>();
 
-                var didMonitorRegister = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor());
+                //var didMonitorRegister = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
 
                 var registeredMonitor = ActorMonitoringExtension.RegisterMonitor(actorSystem,
                     new ActorPerformanceCountersMonitor(
