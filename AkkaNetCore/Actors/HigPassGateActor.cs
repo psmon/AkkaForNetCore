@@ -13,6 +13,7 @@ namespace AkkaNetCore.Actors
         private int msgCnt;
         private Random random;
         private bool ClusterMode = false;
+        private bool MonitorMode = false;
         
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
@@ -27,15 +28,17 @@ namespace AkkaNetCore.Actors
             {
                 msgCnt++;
 
-                Context.IncrementMessagesReceived();
+                if (MonitorMode)
+                {
+                    Context.IncrementMessagesReceived();
+                    Context.IncrementCounter("akka.custom.metric1");
+                    Context.Gauge("akka.messageboxsize", random.Next(1, 10));
+                }
                 
-                Context.IncrementCounter("akka.custom.metric1");
-
-                Context.Gauge("akka.messageboxsize", random.Next(1, 10) );
                 //하이패스는 그냥 지나가면됨
                 if ( (msgCnt % 100) == 0)
                 {
-                    logger.Debug($"{id}-{msg}-{msgCnt}");                    
+                    logger.Info($"{id}-{msg}-{msgCnt}");
                 }                                    
             });
         }
@@ -49,14 +52,15 @@ namespace AkkaNetCore.Actors
                 new[] { typeof(ClusterEvent.IMemberEvent), typeof(ClusterEvent.UnreachableMember) });
             }
             
-            Context.IncrementActorCreated();
+            if(MonitorMode) Context.IncrementActorCreated();
         }
 
         protected override void PostStop()
         {
             if(ClusterMode) Cluster.Unsubscribe(Self);
 
-            Context.IncrementActorStopped();
+            if(MonitorMode) Context.IncrementActorStopped();
+
         }
 
     }
