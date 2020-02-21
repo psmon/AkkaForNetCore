@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
@@ -12,29 +13,36 @@ namespace AkkaNetCore.Actors
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private readonly string id;
         private int msgCnt;
+        private int totalMsgCnt;
         private Random random;
         private bool ClusterMode = true;
 
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
-        public ClusterMsgActor()
+        public ClusterMsgActor(int delay)
         {
             id = Guid.NewGuid().ToString();
             logger.Info($"클러스터 메시지  액터 생성:{id}");
             msgCnt = 0;
+            totalMsgCnt = 0;
             random = new Random();
 
             ReceiveAsync<string>(async msg =>
             {
                 msgCnt++;
+                totalMsgCnt++;
+                //랜덤 Delay를 줌( 외부 요소 : API OR DB )
+                int auto_delay = delay == 0 ? random.Next(1, 100) : delay;
+                await Task.Delay(auto_delay);
+                //Context.Gauge("akka.custom.processTime", auto_delay );
+                //Context.Gauge("akka.custom.processAmount", msg.Length );
 
                 Context.IncrementMessagesReceived();
-
                 Context.IncrementCounter("akka.custom.metric1");
 
-                Context.Gauge("akka.messageboxsize", random.Next(1, 100));
+                if ((msgCnt % 100) == 0)
+                    logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
 
-                logger.Debug($"{id}-{msg}-{msgCnt}");
             });
         }
 

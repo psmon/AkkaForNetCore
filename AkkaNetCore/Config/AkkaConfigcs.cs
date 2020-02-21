@@ -15,9 +15,9 @@ namespace AkkaNetCore.Config
 
         private static Akka.Configuration.Config LoadConfig(string environment, string configFile, IConfiguration configuration)
         {
-            string akkaip = configuration.GetSection("akkaip").Value ?? "localhost";
+            string akkaip = configuration.GetSection("akkaip").Value ?? "127.0.0.1";
             string akkaport = configuration.GetSection("akkaport").Value ?? "5100";
-            string akkaseed = configuration.GetSection("akkaseed").Value ?? "localhost:5100";
+            string akkaseed = configuration.GetSection("akkaseed").Value ?? "127.0.0.1:5100";
             string roles = configuration.GetSection("roles").Value ?? "akkanet";            
 
             var configFilePath = string.Format(configFile, environment.ToLower() != "production" ? string.Concat(".", environment) : "");

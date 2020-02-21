@@ -1,5 +1,7 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.Monitoring;
+using Akka.Monitoring.PerformanceCounters;
 using Akka.Routing;
 using AkkaNetCore.Actors;
 using AkkaNetCore.Config;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLog;
+using Prometheus;
 using Swashbuckle.AspNetCore.Swagger;
 using static AkkaNetCore.Actors.ActorProviders;
 
@@ -74,7 +77,7 @@ namespace AkkaNetCore
 
             services.AddAkkaActor<ClusterMsgActorProvider>((provider, actorFactory) =>
             {
-                var actor = actorFactory.ActorOf(Props.Create<ClusterMsgActor>()
+                var actor = actorFactory.ActorOf(Props.Create<ClusterMsgActor>(0)
                     .WithDispatcher("fast-dispatcher")
                     .WithRouter(FromConfig.Instance), "cluster-roundrobin");
                 return () => actor;
@@ -136,16 +139,40 @@ namespace AkkaNetCore
                 .UseAkka(lifetime, typeof(ClusterMsgActorProvider))
                 .UseAkka(lifetime, typeof(CashGateActorProvider));
 
+            MetricServer metricServer = null;
+
             //APP Life Cycle
             lifetime.ApplicationStarted.Register(() =>
             {
+                // http://localhost:10250/metrics
+                //metricServer = new MetricServer(10250);
+                //metricServer.Start();
+
                 app.ApplicationServices.GetService<ILogger>();
-                app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET                
+                var actorSystem = app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
+
+                // http://localhost:10250/metrics
+                //var didMonitorRegister = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
+
+                //var azureMonotor = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(""));
+
+                //윈도우전용 모니터링(로컬전용)
+                var registeredMonitor = ActorMonitoringExtension.RegisterMonitor(actorSystem,
+                    new ActorPerformanceCountersMonitor(
+                        new CustomMetrics
+                        {
+                            Counters = { "akka.custom.metric1","akkacore.message" },
+                            Gauges = { "akka.messageboxsize" },
+                            Timers = { "akka.handlertime" }
+                        }));
+
+                ActorMonitoringExtension.Monitors(actorSystem).IncrementDebugsLogged();
             });
 
             lifetime.ApplicationStopping.Register(() =>
             {
                 app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
+                //metricServer.Stop();
             });
 
         }

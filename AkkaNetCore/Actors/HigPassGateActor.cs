@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
@@ -13,7 +14,7 @@ namespace AkkaNetCore.Actors
         private int msgCnt;
         private Random random;
         private bool ClusterMode = false;
-        private bool MonitorMode = false;
+        private bool MonitorMode = true;
         
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
@@ -27,19 +28,19 @@ namespace AkkaNetCore.Actors
             ReceiveAsync<string>(async msg =>
             {
                 msgCnt++;
+                int auto_delay = random.Next(1, 100);
+                await Task.Delay(auto_delay);
 
                 if (MonitorMode)
                 {
                     Context.IncrementMessagesReceived();
-                    Context.IncrementCounter("akka.custom.metric1");
+                    Context.IncrementCounter("akka.custom.metric1");                    
                     Context.Gauge("akka.messageboxsize", random.Next(1, 10));
                 }
-                
-                //하이패스는 그냥 지나가면됨
-                if ( (msgCnt % 100) == 0)
-                {
-                    logger.Info($"{id}-{msg}-{msgCnt}");
-                }                                    
+
+                if( (msgCnt%100)==0)
+                    logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
+
             });
         }
 

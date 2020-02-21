@@ -27,7 +27,17 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
 - node1: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --akkaip 127.0.0.1 --akkaport 5101  --akkaseed 127.0.0.1:5100 --port 5001
 - node2: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --akkaip 127.0.0.1 --akkaport 5102  --akkaseed 127.0.0.1:5100 --port 5002
 
+## 모니터링
 
+    docker network create -d bridge --subnet 192.170.0.0/24 --gateway 192.170.0.1 dockernet
+
+    docker network inspect dockernet
+
+
+
+    http://localhost:9090/status
+
+    http://localhost:10250/metrics
 
 ## 주요 의존 모듈
 

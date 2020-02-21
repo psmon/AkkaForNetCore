@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Web;
+using Prometheus;
 
 namespace AkkaNetCore
 {
@@ -13,6 +14,7 @@ namespace AkkaNetCore
     {
         public static void Main(string[] args)
         {
+            
             var nlogEnvironment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (nlogEnvironment == "Production")
             {
@@ -24,6 +26,7 @@ namespace AkkaNetCore
             }
 
             CreateWebHostBuilder(args).Build().Run();
+            
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args)
