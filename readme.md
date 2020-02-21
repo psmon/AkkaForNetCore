@@ -18,6 +18,16 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
 
 다음 버젼에 최적화 되었습니다.
 
+#
+## Local Cluster
+
+로컬에 여러대를 뛰워 분산처리 체크가 필요할시 사용
+
+- master: dotnet run --configuration Release --project AkkaNetCore --environment "Development" --akkaip 127.0.0.1 --akkaport 5100  --akkaseed 127.0.0.1:5100 --port 5000
+- node1: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --akkaip 127.0.0.1 --akkaport 5101  --akkaseed 127.0.0.1:5100 --port 5001
+
+
+
 ## 주요 의존 모듈
 
     <TargetFramework>netcoreapp2.2</TargetFramework>

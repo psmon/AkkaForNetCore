@@ -36,7 +36,7 @@ namespace AkkaNetCore
             // *** Akka Service Setting
 
             var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            services.AddAkka("AkkaNetCore", AkkaConfig.Load(envName) );
+            services.AddAkka("AkkaNetCore", AkkaConfig.Load(envName,Configuration) );
 
             services.AddAkkaActor<PrinterActorProvider>((provider, actorFactory) =>
             {
@@ -59,7 +59,8 @@ namespace AkkaNetCore
             {
                 var actor = actorFactory.ActorOf(Props.Create<HigPassGateActor>()
                     .WithDispatcher("fast-dispatcher")
-                    .WithRouter(FromConfig.Instance), "highpass-roundrobin");
+                    //.WithRouter(FromConfig.Instance), "highpass-roundrobin");
+                    .WithRouter(FromConfig.Instance), "highpass-gate-pool");        
                 return () => actor;
             });
 
