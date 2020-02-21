@@ -12,6 +12,8 @@ namespace AkkaNetCore.Actors
         private readonly string id;
         private int msgCnt;
         private Random random;
+        private bool ClusterMode = false;
+        
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
         public HigPassGateActor()
@@ -23,6 +25,8 @@ namespace AkkaNetCore.Actors
 
             ReceiveAsync<string>(async msg =>
             {
+                msgCnt++;
+
                 Context.IncrementMessagesReceived();
                 
                 Context.IncrementCounter("akka.custom.metric1");
@@ -31,24 +35,27 @@ namespace AkkaNetCore.Actors
                 //하이패스는 그냥 지나가면됨
                 if ( (msgCnt % 100) == 0)
                 {
-                    logger.Debug($"{msg}-{msgCnt}");                    
-                }                    
-                msgCnt++;
+                    logger.Debug($"{id}-{msg}-{msgCnt}");                    
+                }                                    
             });
         }
 
         protected override void PreStart()
         {
             // subscribe to IMemberEvent and UnreachableMember events
-            Cluster.Subscribe(Self, ClusterEvent.InitialStateAsEvents,
+            if (ClusterMode)
+            {
+                Cluster.Subscribe(Self, ClusterEvent.InitialStateAsEvents,
                 new[] { typeof(ClusterEvent.IMemberEvent), typeof(ClusterEvent.UnreachableMember) });
-
+            }
+            
             Context.IncrementActorCreated();
         }
 
         protected override void PostStop()
         {
-            Cluster.Unsubscribe(Self);
+            if(ClusterMode) Cluster.Unsubscribe(Self);
+
             Context.IncrementActorStopped();
         }
 

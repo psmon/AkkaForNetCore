@@ -22,6 +22,8 @@ namespace AkkaNetCore.Actors
 
             ReceiveAsync<string>(async msg =>
             {
+                msgCnt++;
+
                 Context.IncrementMessagesReceived();
 
                 Context.IncrementCounter("akka.custom.metric2");
@@ -32,9 +34,7 @@ namespace AkkaNetCore.Actors
 
                 if( (msgCnt % 10)==0)
                     logger.Info($"{msg}-{auto_delay}-{msgCnt}");
-                //Sender.Tell($"정산완료 통과하세요");
-
-                msgCnt++;
+                //Sender.Tell($"정산완료 통과하세요");                
             });
         }
 
