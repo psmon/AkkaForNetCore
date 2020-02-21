@@ -16,14 +16,16 @@ namespace AkkaNetCore.Controllers
         private readonly IActorRef printerActor;
         private readonly IActorRef highPassActor;
         private readonly IActorRef cashPassActor;
+        private readonly IActorRef clusterMsgActorProvider;
 
 
         public ActorTestController(PrinterActorProvider _printerActorProvider,
-            HigPassGateActorProvider _higPassGateActorProvider,CashGateActorProvider _cashGateActorProvider)
+            HigPassGateActorProvider _higPassGateActorProvider,CashGateActorProvider _cashGateActorProvider, ClusterMsgActorProvider _clusterMsgActorProvider)
         {
             printerActor = _printerActorProvider();
             highPassActor = _higPassGateActorProvider();
             cashPassActor = _cashGateActorProvider();
+            clusterMsgActorProvider = _clusterMsgActorProvider();
         }
         
         [HttpPost("/printer")]
@@ -46,6 +48,13 @@ namespace AkkaNetCore.Controllers
             for (int i = 0; i < count; i++)
                 cashPassActor.Tell(value);
         }
-        
+
+        [HttpPost("/cluster/msg")]
+        public void ClusterMsg(string value, int count)
+        {
+            for (int i = 0; i < count; i++)
+                clusterMsgActorProvider.Tell(value);
+        }
+
     }
 }

@@ -25,6 +25,7 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
 
 - master: dotnet run --configuration Release --project AkkaNetCore --environment "Development" --akkaip 127.0.0.1 --akkaport 5100  --akkaseed 127.0.0.1:5100 --port 5000
 - node1: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --akkaip 127.0.0.1 --akkaport 5101  --akkaseed 127.0.0.1:5100 --port 5001
+- node2: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --akkaip 127.0.0.1 --akkaport 5102  --akkaseed 127.0.0.1:5100 --port 5002
 
 
 

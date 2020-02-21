@@ -16,5 +16,7 @@ namespace AkkaNetCore.Actors
 
         public delegate IActorRef CashGateActorProvider();
 
+        public delegate IActorRef ClusterMsgActorProvider();
+
     }
 }

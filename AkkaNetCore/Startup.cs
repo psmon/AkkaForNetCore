@@ -72,6 +72,15 @@ namespace AkkaNetCore
                 return () => actor;
             });
 
+            services.AddAkkaActor<ClusterMsgActorProvider>((provider, actorFactory) =>
+            {
+                var actor = actorFactory.ActorOf(Props.Create<ClusterMsgActor>()
+                    .WithDispatcher("fast-dispatcher")
+                    .WithRouter(FromConfig.Instance), "cluster-roundrobin");
+                return () => actor;
+            });
+
+
             // Swagger
             services.AddSwaggerGen(options =>
             {
@@ -119,11 +128,12 @@ namespace AkkaNetCore
                 app.UseDeveloperExceptionPage();
             }
             
-            app.UseHttpsRedirection()
-                .UseMvc()
-                .UseAkka(lifetime, typeof(PrinterActorProvider))
+            app.UseMvc();
+
+            app.UseAkka(lifetime, typeof(PrinterActorProvider))
                 .UseAkka(lifetime, typeof(TonerActorProvider))
                 .UseAkka(lifetime, typeof(HigPassGateActorProvider))
+                .UseAkka(lifetime, typeof(ClusterMsgActorProvider))
                 .UseAkka(lifetime, typeof(CashGateActorProvider));
 
             //APP Life Cycle
@@ -132,6 +142,7 @@ namespace AkkaNetCore
                 app.ApplicationServices.GetService<ILogger>();
                 app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET                
             });
+
             lifetime.ApplicationStopping.Register(() =>
             {
                 app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
