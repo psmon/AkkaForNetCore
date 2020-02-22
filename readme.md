@@ -22,12 +22,13 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
 
 이 프로젝트의 최종목적은 클러스터를 활용하는 분산처리 마이크로 서비스를 구동하는것입니다.
 
-로컬개발환경 - 도커개발환경 - 클라우드운영 삼위 일체를 추구합니다.
+로컬개발환경 -> 도커개발환경 -> 클라우드운영 이질감이 없는 개발환경 컨셉을 지향합니다.
 
     솔류션이 위치한 디렉토리에서 명령수행
 
-    ## LightHouse : Akka의 클러스터를 위한 시드노드이며 아파치의 주키퍼와 유사한 기능을 수행합니다.    
-    docker login hub.webnori.com
+    ## LightHouse : Akka의 클러스터를 위한 시드노드이며 아파치의 주키퍼와 유사한 기능을 수행합니다.
+
+    docker login hub.webnori.com  - Private 레지스트리를 활용하였으며, 자신의 레지스트리로 교체 가능합니다.
 
     docker build -f LightHouse/Dockerfile --force-rm -t hub.webnori.com/lighthouse:dev --label "com.webnori.created-by=psmon" --label "com.microsoft.visual-studio.project-name=LightHouse" .
 
@@ -35,10 +36,23 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
 
     docker push hub.webnori.com/lighthouse:dev
 
+## Local Sigle Node
+
+다음과 같은 옵션으로 싱글 노드로 작동가능합니다.
+
+    launchSetting.json
+      "environmentVariables": {
+        "akkaport": "7100",
+        "akkaip": "127.0.0.1",
+        "akkaseed": "akka.tcp://actor-cluster@127.0.0.1:7100",
+        "roles": "akkanet",
+        "port": "5000",
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
 
 ## Local Cluster
 
-로컬에 여러대를 뛰워 분산처리 체크가 필요할시 사용
+로컬 개발환경에서 여러대 어플리케이션의 분산 처리 기능을 체크할때
 
 port : 웹 API 포트이며 충돌이 안나도록 설정
 akkaip/akkaport : 자신의 ip/port이며 충돌이 안나도록 설정
