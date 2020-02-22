@@ -18,7 +18,7 @@ namespace AkkaNetCore.Actors
             rnd = new Random();
             id = Guid.NewGuid().ToString();
             msgCnt = 0;
-            logger.Info($"현금정산게이트 액터 생성:{id} {delay}");
+            logger.Info($"Create CashGateActor:{id} {delay}");
 
             ReceiveAsync<string>(async msg =>
             {

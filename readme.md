@@ -36,7 +36,6 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
     docker push hub.webnori.com/lighthouse:dev
 
 
-#
 ## Local Cluster
 
 로컬에 여러대를 뛰워 분산처리 체크가 필요할시 사용
@@ -47,8 +46,17 @@ akkaseed : Akka 클러스터 시드를 관리
 빌드 특성 : node1을 실행시만 빌드, 이후 노드는 동일 빌드를 사용
 
 - seed: LightHouse> dotnet run --configuration Release --project LightHouse --CLUSTER_IP 127.0.0.1 --CLUSTER_PORT 4053 --CLUSTER_SEEDS akka.tcp://actor-cluster@127.0.0.1:4053
-- node1: dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 5101 --role \"akkanet\" --akkaseed \"akka.tcp://actor-cluster@127.0.0.1:4053\"
-- node2: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --role \"akkanet\" --akkaseed \"akka.tcp://actor-cluster@127.0.0.1:4053\"
+- node1: dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 5101 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
+- node2: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
+
+
+## Docker-Compose Cluster
+
+Local에 서 포트충돌을 피하면서, 클러스터 구성하기는 번거로움으로
+
+Docker-Compose로 멀티 인스턴스 구성이 되어 있습니다. - VisualStudio 2019에서 Run 가능
+
+Docker-Compose로 클러스터 구성을 참고하여,  클라우드또는 쿠버네틱스로의 전환이 용이합니다.
 
 ## 모니터링
 

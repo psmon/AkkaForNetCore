@@ -1,19 +1,21 @@
-FROM microsoft/dotnet:2.2-aspnetcore-runtime AS base
+#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM microsoft/dotnet:2.2-sdk AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
 COPY ["AkkaNetCore/AkkaNetCore.csproj", "AkkaNetCore/"]
 RUN dotnet restore "AkkaNetCore/AkkaNetCore.csproj"
 COPY . .
 WORKDIR "/src/AkkaNetCore"
-RUN dotnet build "AkkaNetCore.csproj" -c Release -o /app
+RUN dotnet build "AkkaNetCore.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "AkkaNetCore.csproj" -c Release -o /app
+RUN dotnet publish "AkkaNetCore.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "AkkaNetCore.dll"]

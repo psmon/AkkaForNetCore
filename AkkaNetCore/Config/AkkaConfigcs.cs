@@ -17,8 +17,9 @@ namespace AkkaNetCore.Config
         {
             string akkaip = configuration.GetSection("akkaip").Value ?? "127.0.0.1";
             string akkaport = configuration.GetSection("akkaport").Value ?? "5100";
+
             string akkaseed = configuration.GetSection("akkaseed").Value ?? "127.0.0.1:5100";
-            string roles = configuration.GetSection("roles").Value ?? "akkanet";            
+            string roles = configuration.GetSection("roles").Value ?? "akkanet";
 
             var configFilePath = string.Format(configFile, environment.ToLower() != "production" ? string.Concat(".", environment) : "");
             if (File.Exists(configFilePath))
@@ -29,7 +30,7 @@ namespace AkkaNetCore.Config
                                 .Replace("$akkaseed", akkaseed)
                                 .Replace("$roles", roles);
 
-                var akkaConfig = ConfigurationFactory.ParseString(config);                                
+                var akkaConfig = ConfigurationFactory.ParseString(config);
 
                 Console.WriteLine($"=== AkkaConfig:{configFilePath}\r\n{akkaConfig}\r\n===");
                 return akkaConfig;

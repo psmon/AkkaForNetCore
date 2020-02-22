@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  lighthouse:
+    image: ${DOCKER_REGISTRY-}lighthouse
+    build:
+      context: .
+      dockerfile: LightHouse/Dockerfile
+    environment:
+      CLUSTER_IP: lighthouse
+      CLUSTER_PORT: 4053
+      CLUSTER_SEEDS: akka.tcp://actor-cluster@lighthouse:4053
+
+  akkanetcore:
+    image: ${DOCKER_REGISTRY-}akkanetcore
+    build:
+      context: .
+      dockerfile: AkkaNetCore/Dockerfile
+    depends_on:
+     - lighthouse
+    ports:
+     - 8080:5000
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      port: 5000
+      akkaport: 7000
+      akkaip: akkanetcore
+      role: "akkanet"
+      akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
+
+  akkanetcore2:
+    image: ${DOCKER_REGISTRY-}akkanetcore
+    build:
+      context: .
+      dockerfile: AkkaNetCore/Dockerfile
+    depends_on:
+     - lighthouse    
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      port: 5000
+      akkaport: 7000
+      akkaip: akkanetcore2
+      role: "akkanet"
+      akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
+
+

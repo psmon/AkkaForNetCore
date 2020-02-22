@@ -21,7 +21,7 @@ namespace AkkaNetCore.Actors
         public HigPassGateActor()
         {
             id = Guid.NewGuid().ToString();
-            logger.Info($"하이패스 액터 생성:{id}");
+            logger.Info($"Create HigPassGateActor:{id}");
             msgCnt = 0;
             random = new Random();
 

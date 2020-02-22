@@ -1,6 +1,4 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-FROM mcr.microsoft.com/dotnet/core/runtime:2.2-stretch-slim AS base
+﻿FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
 WORKDIR /app
 
 # should be a comma-delimited list
@@ -11,6 +9,8 @@ ENV CLUSTER_PORT "4053"
 # 9110 - Petabridge.Cmd
 # 4053 - Akka.Cluster
 EXPOSE 9110 4053
+
+RUN mkdir -p /app/LightHouse && cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src

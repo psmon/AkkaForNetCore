@@ -11,7 +11,8 @@
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject />
-    <SignAssembly>false</SignAssembly>    
+    <SignAssembly>false</SignAssembly>
+    <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>    
   </PropertyGroup>
 
   <ItemGroup>

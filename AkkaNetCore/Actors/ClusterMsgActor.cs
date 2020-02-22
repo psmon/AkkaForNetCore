@@ -22,7 +22,7 @@ namespace AkkaNetCore.Actors
         public ClusterMsgActor(int delay)
         {
             id = Guid.NewGuid().ToString();
-            logger.Info($"클러스터 메시지  액터 생성:{id}");
+            logger.Info($"Create ClusterMsgActor:{id}");
             msgCnt = 0;
             totalMsgCnt = 0;
             random = new Random();

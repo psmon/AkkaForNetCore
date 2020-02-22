@@ -145,6 +145,7 @@ namespace AkkaNetCore
             //APP Life Cycle
             lifetime.ApplicationStarted.Register(() =>
             {
+                // prometheusMonotor 를 사용하기위해서, MerticServer를 켠다...(수집형 모니터)
                 // http://localhost:10250/metrics
                 //metricServer = new MetricServer(10250);
                 //metricServer.Start();
@@ -153,19 +154,27 @@ namespace AkkaNetCore
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
 
                 // http://localhost:10250/metrics
-                //var didMonitorRegister = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
+
+                //var prometheusMonotor = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
 
                 //var azureMonotor = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(""));
 
                 //윈도우전용 모니터링(로컬전용)
-                var registeredMonitor = ActorMonitoringExtension.RegisterMonitor(actorSystem,
+                try
+                {
+                    var windowPerformanceMonitor = ActorMonitoringExtension.RegisterMonitor(actorSystem,
                     new ActorPerformanceCountersMonitor(
                         new CustomMetrics
                         {
-                            Counters = { "akka.custom.metric1","akkacore.message" },
+                            Counters = { "akka.custom.metric1", "akkacore.message" },
                             Gauges = { "akka.messageboxsize" },
                             Timers = { "akka.handlertime" }
                         }));
+                }
+                catch(Exception)
+                {
+                    Console.WriteLine("=============== Not Suport Window Monitor Tools ===============");
+                }                
 
                 ActorMonitoringExtension.Monitors(actorSystem).IncrementDebugsLogged();
             });
