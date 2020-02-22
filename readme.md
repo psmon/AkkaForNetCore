@@ -46,9 +46,9 @@ akkaip/akkaport : 자신의 ip/port이며 충돌이 안나도록 설정
 akkaseed : Akka 클러스터 시드를 관리
 빌드 특성 : node1을 실행시만 빌드, 이후 노드는 동일 빌드를 사용
 
-- node for debug: 비쥬얼 스튜디오에서 실행 
+- seed: LightHouse> dotnet run --configuration Release --project LightHouse --CLUSTER_IP 127.0.0.1 --CLUSTER_PORT 4053 --CLUSTER_SEEDS akka.tcp://actor-cluster@127.0.0.1:4053
 - node1: dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 5101 --role \"akkanet\" --akkaseed \"akka.tcp://actor-cluster@127.0.0.1:4053\"
-- node2: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 5102  --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
+- node2: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --role \"akkanet\" --akkaseed \"akka.tcp://actor-cluster@127.0.0.1:4053\"
 
 ## 모니터링
 
@@ -62,20 +62,9 @@ akkaseed : Akka 클러스터 시드를 관리
 
 ## 주요 의존 모듈
 
-    <ItemGroup>
-    <PackageReference Include="Akka" Version="1.3.17" />
-    <PackageReference Include="Akka.Cluster" Version="1.3.17" />
-    <PackageReference Include="Akka.Logger.NLog" Version="1.3.5" />
-    <PackageReference Include="Akka.Monitoring.ApplicationInsights" Version="0.7.0" />
-    <PackageReference Include="Akka.Monitoring.PerformanceCounters" Version="0.7.0" />    
-    <PackageReference Include="Akka.Monitoring.Prometheus" Version="2.0.1" />
-    <PackageReference Include="Akka.Monitoring.StatsD" Version="0.7.0" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />    
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.1" />    
-    <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
-    </ItemGroup>
+- NLog.Web.AspNetCore : 로깅
+- Akka.Cluster : Akka를 포함한 클러스터링 모듈
+- Akka.Monitoring : 모니터링 모듈
+- Akka.Logger.NLog : Nlog호환 Akka 로깅
+- Swashbuckle.AspNetCore : API문서 자동
 

@@ -11,8 +11,7 @@
     <ApplicationIcon />
     <OutputType>Exe</OutputType>
     <StartupObject />
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>psmon.pfx</AssemblyOriginatorKeyFile>
+    <SignAssembly>false</SignAssembly>    
   </PropertyGroup>
 
   <ItemGroup>

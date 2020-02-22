@@ -34,5 +34,6 @@ akka {
     #will inject this node as a self-seed node at run-time
     seed-nodes = [] 
     roles = [lighthouse]
+    auto-down-unreachable-after = 10s
   }
 }

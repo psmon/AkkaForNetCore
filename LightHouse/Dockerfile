@@ -10,7 +10,7 @@ ENV CLUSTER_PORT "4053"
 # 4053 - Akka.Cluster
 EXPOSE 9110 4053
 
-RUN mkdir -p /app/SearchApi && cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+RUN mkdir -p /app/LightHouse && cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build
 WORKDIR /src
