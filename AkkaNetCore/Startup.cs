@@ -151,13 +151,12 @@ namespace AkkaNetCore
                 app.ApplicationServices.GetService<ILogger>();
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
 
-
                 try
                 {
                     switch (appConfig.MonitorTool)
                     {
                         case "win":
-                            ActorMonitoringExtension.RegisterMonitor(actorSystem,
+                            var win = ActorMonitoringExtension.RegisterMonitor(actorSystem,
                                 new ActorPerformanceCountersMonitor(
                                     new CustomMetrics
                                     {
@@ -167,14 +166,14 @@ namespace AkkaNetCore
                                     }));
                             break;
                         case "azure":
-                            ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(appConfig.MonitorToolApiKey));
+                            var azure = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(appConfig.MonitorToolApiKey));
                             break;
                         case "prometheus":
                             // prometheusMonotor 를 사용하기위해서, MerticServer를 켠다...(수집형 모니터)
                             // http://localhost:10250/metrics
                             metricServer = new MetricServer(10250);
                             metricServer.Start();
-                            ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
+                            var prometheus = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
                             break;
                     }
                 }

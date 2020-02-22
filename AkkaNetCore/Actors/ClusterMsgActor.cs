@@ -32,16 +32,13 @@ namespace AkkaNetCore.Actors
                 msgCnt++;
                 totalMsgCnt++;
                 //랜덤 Delay를 줌( 외부 요소 : API OR DB )
-                int auto_delay = delay == 0 ? random.Next(1, 100) : delay;
+                int auto_delay = delay == 0 ? random.Next(1, 100) : delay;                
                 await Task.Delay(auto_delay);
-                //Context.Gauge("akka.custom.processTime", auto_delay );
-                //Context.Gauge("akka.custom.processAmount", msg.Length );
-
-                Context.IncrementMessagesReceived();
                 Context.IncrementCounter("akka.custom.metric1");
-
                 if ((msgCnt % 100) == 0)
+                {
                     logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
+                }
 
             });
         }

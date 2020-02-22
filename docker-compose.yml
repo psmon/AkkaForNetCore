@@ -43,4 +43,20 @@ services:
       role: "akkanet"
       akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
 
+  akkanetcore3:
+    image: ${DOCKER_REGISTRY-}akkanetcore
+    build:
+      context: .
+      dockerfile: AkkaNetCore/Dockerfile
+    depends_on:
+     - lighthouse    
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      port: 5000
+      akkaport: 7000
+      akkaip: akkanetcore3
+      role: "akkanet"
+      akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
+
+
 

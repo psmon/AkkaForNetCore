@@ -30,16 +30,17 @@ namespace AkkaNetCore.Actors
                 msgCnt++;
                 int auto_delay = random.Next(1, 100);
                 await Task.Delay(auto_delay);
-
                 if (MonitorMode)
                 {
-                    Context.IncrementMessagesReceived();
-                    Context.IncrementCounter("akka.custom.metric1");                    
+                    Context.IncrementCounter("akka.custom.metric1");
                     Context.Gauge("akka.messageboxsize", random.Next(1, 10));
                 }
 
-                if( (msgCnt%100)==0)
+                if ((msgCnt % 100) == 0)
+                {                    
                     logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
+                }
+                    
 
             });
         }

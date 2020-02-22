@@ -59,7 +59,7 @@ akkaip/akkaport : 자신의 ip/port이며 충돌이 안나도록 설정
 akkaseed : Akka 클러스터 시드를 관리
 빌드 특성 : node1을 실행시만 빌드, 이후 노드는 동일 빌드를 사용
 
-- seed: LightHouse> dotnet run --configuration Release --project LightHouse --CLUSTER_IP 127.0.0.1 --CLUSTER_PORT 4053 --CLUSTER_SEEDS akka.tcp://actor-cluster@127.0.0.1:4053
+- seed: docker run -e CLUSTER_IP=127.0.0.1 -e CLUSTER_PORT=4053 -e CLUSTER_SEEDS=akka.tcp://actor-cluster@127.0.0.1:4053 --publish 4053:4053 --name netcore_lighthouse hub.webnori.com/lighthouse:dev
 - node1: dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 5101 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
 - node2: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
 
