@@ -30,7 +30,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />    
     <PackageReference Include="NLog.Web.AspNetCore" Version="4.8.1" />    
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="4.7.0" />
-
   </ItemGroup>
 
   <ItemGroup>

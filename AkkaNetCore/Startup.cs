@@ -22,7 +22,8 @@ namespace AkkaNetCore
         private string AppName = "AkkaNetCore";
         private string Company = "웹노리";
         private string CompanyUrl = "http://wiki.webnori.com/";
-        private string DocUrl = "http://wiki.webnori.com/category/dev";
+        private string DocUrl = "http://wiki.webnori.com/display/webfr/.NET+Core+With+Akka";
+        private string SystemNameForCluster = "actor-cluster";
 
         public Startup(IConfiguration configuration)
         {
@@ -39,7 +40,7 @@ namespace AkkaNetCore
             // *** Akka Service Setting
 
             var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            services.AddAkka("AkkaNetCore", AkkaConfig.Load(envName,Configuration) );
+            services.AddAkka(SystemNameForCluster, AkkaConfig.Load(envName,Configuration) );
 
             services.AddAkkaActor<PrinterActorProvider>((provider, actorFactory) =>
             {

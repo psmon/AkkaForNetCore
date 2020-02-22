@@ -22,6 +22,11 @@
       "launchBrowser": true,
       "launchUrl": "swagger/",
       "environmentVariables": {
+        "akkaport": "7100",
+        "akkaip": "127.0.0.1",
+        "akkaseed": "\"akka.tcp://actor-cluster@127.0.0.1:4053\"",
+        "roles": "\"akkanet\"",
+        "port": "5000",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "applicationUrl": "http://localhost:5000"
