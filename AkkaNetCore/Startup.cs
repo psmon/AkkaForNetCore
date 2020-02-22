@@ -1,7 +1,9 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.Monitoring;
+using Akka.Monitoring.ApplicationInsights;
 using Akka.Monitoring.PerformanceCounters;
+using Akka.Monitoring.Prometheus;
 using Akka.Routing;
 using AkkaNetCore.Actors;
 using AkkaNetCore.Config;
@@ -37,8 +39,9 @@ namespace AkkaNetCore
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
-            // *** Akka Service Setting
+            services.AddSingleton(Configuration.GetSection("AppSettings").Get<AppSettings>());// * AppSettings
 
+            // *** Akka Service Setting
             var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             services.AddAkka(SystemNameForCluster, AkkaConfig.Load(envName,Configuration) );
 
@@ -126,7 +129,6 @@ namespace AkkaNetCore
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", AppName + "V1");
             });
 
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -141,50 +143,54 @@ namespace AkkaNetCore
                 .UseAkka(lifetime, typeof(CashGateActorProvider));
 
             MetricServer metricServer = null;
+            var appConfig = app.ApplicationServices.GetService<AppSettings>();
 
             //APP Life Cycle
             lifetime.ApplicationStarted.Register(() =>
             {
-                // prometheusMonotor 를 사용하기위해서, MerticServer를 켠다...(수집형 모니터)
-                // http://localhost:10250/metrics
-                //metricServer = new MetricServer(10250);
-                //metricServer.Start();
-
                 app.ApplicationServices.GetService<ILogger>();
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
 
-                // http://localhost:10250/metrics
 
-                //var prometheusMonotor = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
-
-                //var azureMonotor = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(""));
-
-                //윈도우전용 모니터링(로컬전용)
                 try
                 {
-                    var windowPerformanceMonitor = ActorMonitoringExtension.RegisterMonitor(actorSystem,
-                    new ActorPerformanceCountersMonitor(
-                        new CustomMetrics
-                        {
-                            Counters = { "akka.custom.metric1", "akkacore.message" },
-                            Gauges = { "akka.messageboxsize" },
-                            Timers = { "akka.handlertime" }
-                        }));
+                    switch (appConfig.MonitorTool)
+                    {
+                        case "win":
+                            ActorMonitoringExtension.RegisterMonitor(actorSystem,
+                                new ActorPerformanceCountersMonitor(
+                                    new CustomMetrics
+                                    {
+                                        Counters = { "akka.custom.metric1", "akkacore.message" },
+                                        Gauges = { "akka.messageboxsize" },
+                                        Timers = { "akka.handlertime" }
+                                    }));
+                            break;
+                        case "azure":
+                            ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(appConfig.MonitorToolApiKey));
+                            break;
+                        case "prometheus":
+                            // prometheusMonotor 를 사용하기위해서, MerticServer를 켠다...(수집형 모니터)
+                            // http://localhost:10250/metrics
+                            metricServer = new MetricServer(10250);
+                            metricServer.Start();
+                            ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
+                            break;
+                    }
                 }
-                catch(Exception)
+                catch(Exception e)
                 {
                     Console.WriteLine("=============== Not Suport Window Monitor Tools ===============");
-                }                
-
+                }
+                
                 ActorMonitoringExtension.Monitors(actorSystem).IncrementDebugsLogged();
             });
 
             lifetime.ApplicationStopping.Register(() =>
             {
                 app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
-                //metricServer.Stop();
+                if(appConfig.MonitorTool == "prometheus") metricServer.Stop();
             });
-
         }
     }
 }
