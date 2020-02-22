@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
-        public static IServiceCollection AddAkkaActor<TService>(this IServiceCollection services, Func<IServiceProvider, IActorRefFactory, TService> implementationFactory) where TService : class
+        public static IServiceCollection AddActor<TService>(this IServiceCollection services, Func<IServiceProvider, IActorRefFactory, TService> implementationFactory) where TService : class
         {
             // Register Actor
             services.AddSingleton<TService>((provider) =>

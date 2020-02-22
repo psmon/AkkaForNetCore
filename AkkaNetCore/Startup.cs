@@ -45,7 +45,7 @@ namespace AkkaNetCore
             var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             services.AddAkka(SystemNameForCluster, AkkaConfig.Load(envName,Configuration) );
 
-            services.AddAkkaActor<PrinterActorProvider>((provider, actorFactory) =>
+            services.AddActor<PrinterActorProvider>((provider, actorFactory) =>
             {
                 var printerActor = actorFactory.ActorOf(Props.Create<PrinterActor>()
                     .WithDispatcher("custom-dispatcher")
@@ -55,14 +55,14 @@ namespace AkkaNetCore
                 return () => printerActor;
             });
 
-            services.AddAkkaActor<TonerActorProvider>((provider, actorFactory) =>
+            services.AddActor<TonerActorProvider>((provider, actorFactory) =>
             {
                 var tonerActor = actorFactory.ActorOf(Props.Create(() => new TonerActor()).WithRouter(new RoundRobinPool(1)),
                     "toner");
                 return () => tonerActor;
             });
 
-            services.AddAkkaActor<HigPassGateActorProvider>((provider, actorFactory) =>
+            services.AddActor<HigPassGateActorProvider>((provider, actorFactory) =>
             {
                 var actor = actorFactory.ActorOf(Props.Create<HigPassGateActor>()
                     .WithDispatcher("fast-dispatcher")
@@ -71,7 +71,7 @@ namespace AkkaNetCore
                 return () => actor;
             });
 
-            services.AddAkkaActor<CashGateActorProvider>((provider, actorFactory) =>
+            services.AddActor<CashGateActorProvider>((provider, actorFactory) =>
             {
                 var actor = actorFactory.ActorOf(Props.Create<CashGateActor>(0)
                     .WithDispatcher("slow-dispatcher")
@@ -79,7 +79,7 @@ namespace AkkaNetCore
                 return () => actor;
             });
 
-            services.AddAkkaActor<ClusterMsgActorProvider>((provider, actorFactory) =>
+            services.AddActor<ClusterMsgActorProvider>((provider, actorFactory) =>
             {
                 var actor = actorFactory.ActorOf(Props.Create<ClusterMsgActor>(0)
                     .WithDispatcher("fast-dispatcher")
