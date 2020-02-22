@@ -121,6 +121,12 @@ namespace AkkaNetCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
         {
+            app.UserActor(lifetime, typeof(PrinterActorProvider))
+                .UserActor(lifetime, typeof(TonerActorProvider))
+                .UserActor(lifetime, typeof(HigPassGateActorProvider))
+                .UserActor(lifetime, typeof(ClusterMsgActorProvider))
+                .UserActor(lifetime, typeof(CashGateActorProvider));
+
             app.UseSwagger();
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.               
@@ -136,12 +142,6 @@ namespace AkkaNetCore
             
             app.UseMvc();
 
-            app.UseAkka(lifetime, typeof(PrinterActorProvider))
-                .UseAkka(lifetime, typeof(TonerActorProvider))
-                .UseAkka(lifetime, typeof(HigPassGateActorProvider))
-                .UseAkka(lifetime, typeof(ClusterMsgActorProvider))
-                .UseAkka(lifetime, typeof(CashGateActorProvider));
-
             MetricServer metricServer = null;
             var appConfig = app.ApplicationServices.GetService<AppSettings>();
 
@@ -149,6 +149,7 @@ namespace AkkaNetCore
             lifetime.ApplicationStarted.Register(() =>
             {
                 app.ApplicationServices.GetService<ILogger>();
+
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
 
                 try
