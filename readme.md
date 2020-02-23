@@ -60,7 +60,7 @@ akkaseed : Akka 클러스터 시드를 관리
 빌드 특성 : node1을 실행시만 빌드, 이후 노드는 동일 빌드를 사용
 
 - seed: docker run -e CLUSTER_IP=127.0.0.1 -e CLUSTER_PORT=4053 -e CLUSTER_SEEDS=akka.tcp://actor-cluster@127.0.0.1:4053 --publish 4053:4053 --name netcore_lighthouse hub.webnori.com/lighthouse:dev
-- node1: dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 5101 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
+- node1: dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 7100 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
 - node2: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
 - node3: dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5003 --akkaip 127.0.0.1 --akkaport 5103 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.Cluster.Tools.Singleton;
 using Akka.Monitoring;
 using Akka.Monitoring.ApplicationInsights;
 using Akka.Monitoring.PerformanceCounters;
@@ -21,6 +22,7 @@ using static AkkaNetCore.Actors.ActorProviders;
 using IApplicationLifetime = Microsoft.AspNetCore.Hosting.IApplicationLifetime;
 
 
+
 namespace AkkaNetCore
 {
     public class Startup
@@ -30,7 +32,10 @@ namespace AkkaNetCore
         private string Email = "psmon@live.co.kr";
         private string CompanyUrl = "http://wiki.webnori.com/";
         private string DocUrl = "http://wiki.webnori.com/display/webfr/.NET+Core+With+Akka";
-        private string SystemNameForCluster = "actor-cluster";
+
+        static public string SystemNameForCluster = "actor-cluster";
+
+        public static IActorRef SingleToneActor;    //Todo : 다른위치로 옮길것
 
         public Startup(IConfiguration configuration)
         {
@@ -44,7 +49,6 @@ namespace AkkaNetCore
         {
             //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddControllers();
-
 
             services.AddSingleton(Configuration.GetSection("AppSettings").Get<AppSettings>());// * AppSettings
 
@@ -161,6 +165,26 @@ namespace AkkaNetCore
                 app.ApplicationServices.GetService<ILogger>();
 
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
+
+                //클러스터 싱글톤 액터 생성..
+                /*
+                actorSystem.ActorOf(ClusterSingletonManager.Props(
+                    singletonProps: Props.Create<SingleToneActor>().WithDispatcher("custom-fork-join-dispatcher"),
+                    terminationMessage: PoisonPill.Instance,
+                    settings: ClusterSingletonManagerSettings.Create(actorSystem).WithRole("akkanet")),
+                    name: "consumer"
+                );                               
+                SingleToneActor = actorSystem.ActorOf(ClusterSingletonProxy.Props(
+                    singletonManagerPath: "/user/consumer",
+                    settings: ClusterSingletonProxySettings.Create(actorSystem).WithRole("akkanet")),
+                    name: "consumerProxy"
+               );*/
+
+                if (AkkaConfig.IsLeeader)
+                {
+                    var actor = actorSystem.ActorOf(Props.Create<SingleToneActor>()
+                        .WithDispatcher("fast-dispatcher"), "singletone");
+                }
 
                 try
                 {

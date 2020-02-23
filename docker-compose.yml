@@ -23,7 +23,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       port: 5000
-      akkaport: 7000
+      akkaport: 7100
       akkaip: akkanetcore
       role: "akkanet"
       akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"

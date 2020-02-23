@@ -4,7 +4,7 @@ using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
 using Akka.Monitoring;
-
+using AkkaNetCore.Config;
 
 namespace AkkaNetCore.Actors
 {
@@ -19,25 +19,39 @@ namespace AkkaNetCore.Actors
 
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
+        protected ActorSelection CountConsume;
+
         public ClusterMsgActor(int delay)
         {
             id = Guid.NewGuid().ToString();
-            logger.Info($"Create ClusterMsgActor:{id}");
+
+            //logger.Info($"Create ClusterMsgActor:{id}");
+
             msgCnt = 0;
             totalMsgCnt = 0;
             random = new Random();
 
             ReceiveAsync<string>(async msg =>
             {
+                if(msgCnt == 0)
+                {
+                    CountConsume = Context.System.ActorSelection($"akka.tcp://{Startup.SystemNameForCluster}@{AkkaConfig.LeaderNodeName}:7100/user/singletone");
+                }
+
                 msgCnt++;
                 totalMsgCnt++;
                 //랜덤 Delay를 줌( 외부 요소 : API OR DB )
-                int auto_delay = delay == 0 ? random.Next(1, 100) : delay;                
+                int auto_delay = delay == 0 ? random.Next(1, 100) : delay;
                 await Task.Delay(auto_delay);
                 Context.IncrementCounter("akka.custom.metric1");
+
+                UInt64 addCount = 1;
+                //Startup.SingleToneActor.Tell(addCount);
+                CountConsume.Tell(addCount);
+
                 if ((msgCnt % 100) == 0)
                 {
-                    logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
+                    //logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");                    
                 }
 
             });
