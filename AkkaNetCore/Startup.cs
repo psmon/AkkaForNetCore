@@ -7,15 +7,19 @@ using Akka.Monitoring.Prometheus;
 using Akka.Routing;
 using AkkaNetCore.Actors;
 using AkkaNetCore.Config;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using NLog;
 using Prometheus;
 using Swashbuckle.AspNetCore.Swagger;
 using static AkkaNetCore.Actors.ActorProviders;
+using IApplicationLifetime = Microsoft.AspNetCore.Hosting.IApplicationLifetime;
+
 
 namespace AkkaNetCore
 {
@@ -23,6 +27,7 @@ namespace AkkaNetCore
     {
         private string AppName = "AkkaNetCore";
         private string Company = "웹노리";
+        private string Email = "psmon@live.co.kr";
         private string CompanyUrl = "http://wiki.webnori.com/";
         private string DocUrl = "http://wiki.webnori.com/display/webfr/.NET+Core+With+Akka";
         private string SystemNameForCluster = "actor-cluster";
@@ -37,7 +42,9 @@ namespace AkkaNetCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddControllers();
+
 
             services.AddSingleton(Configuration.GetSection("AppSettings").Get<AppSettings>());// * AppSettings
 
@@ -89,28 +96,26 @@ namespace AkkaNetCore
 
 
             // Swagger
-            services.AddSwaggerGen(options =>
+            services.AddSwaggerGen(c =>
             {
-                options.SwaggerDoc("v1", new Info
+                c.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = AppName,
                     Description = $"{AppName} ASP.NET Core Web API",
-                    //TermsOfService = "None",
-                    Contact = new Contact
+                    TermsOfService = new Uri("http://wiki.webnori.com/display/codesniper/TermsOfService"),
+                    Contact = new OpenApiContact
                     {
-                        Name = $"{Company} {AppName} Document",
-                        Url = DocUrl
+                        Name = Company,
+                        Email = Email,
+                        Url = new Uri(CompanyUrl),
                     },
-                    License = new License
+                    License = new OpenApiLicense
                     {
-                        Name = $"{Company}",
-                        Url = CompanyUrl
+                        Name = $"Document",
+                        Url = new Uri(DocUrl),
                     }
                 });
-                var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                var xmlPath = System.IO.Path.Combine(AppContext.BaseDirectory, xmlFile);
-                options.IncludeXmlComments(xmlPath);
             });
 
             // API주소룰 소문자로...
@@ -119,7 +124,7 @@ namespace AkkaNetCore
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime lifetime)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApplicationLifetime lifetime)
         {
             app.UserActor(lifetime, typeof(PrinterActorProvider))
                 .UserActor(lifetime, typeof(TonerActorProvider))
@@ -132,15 +137,20 @@ namespace AkkaNetCore
             // specifying the Swagger JSON endpoint.               
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", AppName + "V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
             });
 
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            
-            app.UseMvc();
+                        
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
 
             MetricServer metricServer = null;
             var appConfig = app.ApplicationServices.GetService<AppSettings>();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Web;
@@ -25,11 +26,32 @@ namespace AkkaNetCore
                 LogManager.LoadConfiguration(nlogEnvironment == "" ? "NLog.config" : $"NLog.{nlogEnvironment}.config");
             }
 
-            CreateWebHostBuilder(args).Build().Run();
+            CreateHostBuilder(args).Build().Run();
             
         }
 
-        public static IWebHostBuilder CreateWebHostBuilder(string[] args)
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+              .ConfigureWebHostDefaults(webBuilder =>
+        {
+            var config = GetServerUrlsFromCommandLine(args);
+            var hostUrl = config.GetValue<string>("server.urls");
+
+            webBuilder.ConfigureKestrel(serverOptions =>
+            {
+                // Set properties and call methods on options
+            })
+            .UseUrls(hostUrl)
+            .UseStartup<Startup>()
+            .ConfigureLogging(logging =>
+            {
+                logging.ClearProviders();
+            })
+            .UseNLog();
+
+        });
+
+        public static IWebHostBuilder CreateWebHostBuilder_22(string[] args)
         {
             var config = GetServerUrlsFromCommandLine(args);
             var hostUrl = config.GetValue<string>("server.urls");
