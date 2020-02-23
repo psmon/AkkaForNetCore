@@ -33,7 +33,7 @@ namespace AkkaNetCore.Actors
                 if (MonitorMode)
                 {
                     Context.IncrementCounter("akka.custom.metric1");
-                    Context.Gauge("akka.messageboxsize", random.Next(1, 10));
+                    Context.Gauge("akka.messageboxsize", auto_delay);
                 }
 
                 if ((msgCnt % 100) == 0)

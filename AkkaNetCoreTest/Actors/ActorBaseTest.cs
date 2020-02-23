@@ -21,7 +21,7 @@ namespace AkkaNetCoreTest.Actors
             probe = this.CreateTestProbe();
         }
         
-        [TestCase(100, 300)]
+        [TestCase(100, 500)]
         public void Actor_should_respond_within_max_allowable_time(int delay, int cutoff)
         {
             var cashGate = Sys.ActorOf(Props.Create(() => new CashGateActor(delay)));

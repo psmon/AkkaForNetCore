@@ -28,28 +28,36 @@ namespace AkkaNetCore.Controllers
             clusterMsgActorProvider = _clusterMsgActorProvider();
         }
         
-        [HttpPost("/printer")]
+        [HttpPost("/printer/tell")]
         public void Printer([FromBody] PrintPage value)
         {
             // 프린팅을 요청한다.
             printerActor.Tell(value);
         }
         
-        [HttpPost("/gate/highpassgate")]
+        [HttpPost("/gate/highpassgate/tell")]
         public void Highpassgate(string value,int count)
         {
             for(int i=0;i<count;i++)
                 highPassActor.Tell(value);
         }
         
-        [HttpPost("/gate/cashgate")]
+        [HttpPost("/gate/cashgate/tell")]
         public void Cashgate(string value, int count)
         {
             for (int i = 0; i < count; i++)
                 cashPassActor.Tell(value);
         }
 
-        [HttpPost("/cluster/msg")]
+        [HttpPost("/gate/cashgate/ask")]
+        public string CashgateAsk(string value)
+        {
+            var result = cashPassActor.Ask<string>(value).Result;
+            return result;
+        }
+
+
+        [HttpPost("/cluster/msg/tell")]
         public void ClusterMsg(string value, int count)
         {
             for (int i = 0; i < count; i++)

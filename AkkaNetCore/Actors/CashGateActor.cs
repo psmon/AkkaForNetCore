@@ -34,7 +34,11 @@ namespace AkkaNetCore.Actors
 
                 if( (msgCnt % 10)==0)
                     logger.Info($"{msg}-{auto_delay}-{msgCnt}");
-                //Sender.Tell($"정산완료 통과하세요");                
+
+                //수신자가 있으면 보낸다.
+                if(!Sender.IsNobody())
+                    Sender.Tell($"정산완료 통과하세요");
+
             });
         }
 
