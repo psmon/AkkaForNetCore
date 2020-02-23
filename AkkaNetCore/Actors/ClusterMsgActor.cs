@@ -35,7 +35,7 @@ namespace AkkaNetCore.Actors
             {
                 if(msgCnt == 0)
                 {
-                    CountConsume = Context.System.ActorSelection($"akka.tcp://{Startup.SystemNameForCluster}@{AkkaConfig.LeaderNodeName}:7100/user/singletone");
+                    //CountConsume = Startup.ActorSystem.ActorSelection($"akka.tcp://{Startup.SystemNameForCluster}@{AkkaConfig.LeaderNodeName}:7100/user/singletone");
                 }
 
                 msgCnt++;
@@ -45,13 +45,14 @@ namespace AkkaNetCore.Actors
                 await Task.Delay(auto_delay);
                 Context.IncrementCounter("akka.custom.metric1");
 
+                //TODO : 싱글톤 액터 구현 성공시키기...
                 UInt64 addCount = 1;
                 //Startup.SingleToneActor.Tell(addCount);
-                CountConsume.Tell(addCount);
+                //CountConsume.Tell(addCount);
 
                 if ((msgCnt % 100) == 0)
                 {
-                    //logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");                    
+                    logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");                    
                 }
 
             });
