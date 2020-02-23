@@ -10,7 +10,11 @@ namespace AkkaNetCore.Actors
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private readonly string id;
         private UInt64 totalCount;
-        
+        private bool ClusterMode = true;
+
+        protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
+
+
         public SingleToneActor()
         {
             id = Guid.NewGuid().ToString();
@@ -20,10 +24,29 @@ namespace AkkaNetCore.Actors
             {                
                 totalCount += amount;
 
+                if(totalCount < 50)                
+                    logger.Debug($"================= 싱글톤 메시지 인입 =================");
+
                 //100개씩마다 로그찍음
-                if( (totalCount % 100) == 0)
+                if ( (totalCount % 100) == 0)
                     logger.Info($"====== 메시지 처리량:{totalCount}");
             });
+        }
+
+        protected override void PreStart()
+        {
+            // subscribe to IMemberEvent and UnreachableMember events
+            if (ClusterMode)
+            {
+                Cluster.Subscribe(Self, ClusterEvent.InitialStateAsEvents,
+                new[] { typeof(ClusterEvent.IMemberEvent), typeof(ClusterEvent.UnreachableMember) });
+            }
+
+        }
+
+        protected override void PostStop()
+        {
+            if (ClusterMode) Cluster.Unsubscribe(Self);
         }
     }
 }

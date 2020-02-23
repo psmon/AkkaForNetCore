@@ -25,7 +25,7 @@ services:
       port: 5000
       akkaport: 7100
       akkaip: akkanetcore
-      role: "akkanet"
+      roles: "akkanet"
       akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
 
   akkanetcore2:
@@ -40,7 +40,7 @@ services:
       port: 5000
       akkaport: 7000
       akkaip: akkanetcore2
-      role: "akkanet"
+      roles: "akkanet"
       akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
 
   akkanetcore3:
@@ -55,7 +55,7 @@ services:
       port: 5000
       akkaport: 7000
       akkaip: akkanetcore3
-      role: "akkanet"
+      roles: "akkanet"
       akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
 
 

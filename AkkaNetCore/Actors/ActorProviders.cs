@@ -18,5 +18,7 @@ namespace AkkaNetCore.Actors
 
         public delegate IActorRef ClusterMsgActorProvider();
 
+        public delegate IActorRef SingleToneActorProvider();
+
     }
 }

@@ -5,6 +5,7 @@ using Akka.Cluster;
 using Akka.Event;
 using Akka.Monitoring;
 using AkkaNetCore.Config;
+using AkkaNetCore.Extensions;
 
 namespace AkkaNetCore.Actors
 {
@@ -19,7 +20,7 @@ namespace AkkaNetCore.Actors
 
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
-        protected ActorSelection CountConsume;
+        protected IActorRef CountConsume;        
 
         public ClusterMsgActor(int delay)
         {
@@ -31,11 +32,13 @@ namespace AkkaNetCore.Actors
             totalMsgCnt = 0;
             random = new Random();
 
+            CountConsume = Startup.SingleToneActor;
+
             ReceiveAsync<string>(async msg =>
             {
-                if(msgCnt == 0)
+                if(msgCnt < 5)
                 {
-                    //CountConsume = Startup.ActorSystem.ActorSelection($"akka.tcp://{Startup.SystemNameForCluster}@{AkkaConfig.LeaderNodeName}:7100/user/singletone");
+                    logger.Debug($"====== Msg:{msg} Count:{msgCnt}");
                 }
 
                 msgCnt++;
@@ -47,7 +50,6 @@ namespace AkkaNetCore.Actors
 
                 //TODO : 싱글톤 액터 구현 성공시키기...
                 UInt64 addCount = 1;
-                //Startup.SingleToneActor.Tell(addCount);
                 //CountConsume.Tell(addCount);
 
                 if ((msgCnt % 100) == 0)

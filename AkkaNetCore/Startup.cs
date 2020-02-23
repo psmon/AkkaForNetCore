@@ -8,7 +8,7 @@ using Akka.Monitoring.Prometheus;
 using Akka.Routing;
 using AkkaNetCore.Actors;
 using AkkaNetCore.Config;
-
+using AkkaNetCore.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -91,6 +91,8 @@ namespace AkkaNetCore
                 return () => actor;
             });
 
+
+            // For Cluster
             services.AddActor<ClusterMsgActorProvider>((provider, actorFactory) =>
             {
                 var actor = actorFactory.ActorOf(Props.Create<ClusterMsgActor>(0)
@@ -169,29 +171,9 @@ namespace AkkaNetCore
 
                 ActorSystem = actorSystem;
 
-                //클러스터 싱글톤 액터 생성..
-
-                if (AkkaConfig.IsLeeader)
-                {
-                    var actor = actorSystem.ActorOf(Props.Create<SingleToneActor>()
-                        .WithDispatcher("fast-dispatcher"), "singletone");
-
-                }
-
-                actorSystem.ActorOf(ClusterSingletonManager.Props(
-                    singletonProps: Props.Create<SingleToneActor>().WithDispatcher("custom-fork-join-dispatcher"),
-                    terminationMessage: PoisonPill.Instance,
-                    settings: ClusterSingletonManagerSettings.Create(actorSystem).WithRole("akkanet")),
-                    name: "consumer"
-                );
-
-                SingleToneActor = actorSystem.ActorOf(ClusterSingletonProxy.Props(
-                    singletonManagerPath: "/user/consumer",
-                    settings: ClusterSingletonProxySettings.Create(actorSystem).WithRole("akkanet")),
-                    name: "consumerProxy"
-               );
-
-
+                //TODO : 싱글톤 클러스터 성공시키기
+                //var actor = AkkaBoostrap.BootstrapSingleton<SingleToneActor>(actorSystem, "SingleToneActor", "akkanet");
+                //SingleToneActor = AkkaBoostrap.BootstrapSingletonProxy(actorSystem, "SingleToneActor", "akkanet", "/user/SingleToneActor", "singleToneActorProxy");
 
                 try
                 {
