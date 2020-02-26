@@ -226,8 +226,10 @@ namespace AkkaNetCore
 
             lifetime.ApplicationStopping.Register(() =>
             {
+                Console.WriteLine("=============== Start Graceful Down ===============");
                 app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
-                if(appConfig.MonitorTool == "prometheus") metricServer.Stop();
+                Console.WriteLine("=============== Completed Graceful Down ===============");
+                if (appConfig.MonitorTool == "prometheus") metricServer.Stop();
             });
         }
     }

@@ -75,20 +75,3 @@ services:
       akkaip: akkanetcore3
       roles: "akkanet"
       akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
-
-  akkanetcore4:
-    image: ${DOCKER_REGISTRY-}akkanetcore
-    build:
-      context: .
-      dockerfile: AkkaNetCore/Dockerfile
-    depends_on:
-     - lighthouse    
-    environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      MonitorTool: datadog
-      MonitorToolCon: datadog
-      port: 5000
-      akkaport: 7000
-      akkaip: akkanetcore4
-      roles: "akkanet"
-      akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"

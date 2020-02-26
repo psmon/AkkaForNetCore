@@ -1,6 +1,7 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.Event;
+using Akka.Monitoring;
 
 namespace AkkaNetCore.Actors
 {
@@ -26,10 +27,22 @@ namespace AkkaNetCore.Actors
                 {
                     DateTime endTime = DateTime.Now;
                     TimeSpan timeSpan = endTime - startTime;                    
-                    logger.Info($"====== Process Total:{totalCount} TPS:{endTime.Second}");
+                    logger.Info($"====== Process Total:{totalCount} Seconds(100):{timeSpan.TotalSeconds}");
+                    Context.IncrementCounter("akka.custom.singeactor");
+                    Context.Gauge("akka.gauge.msg100", (int)Math.Truncate(timeSpan.TotalMilliseconds) );
                     startTime = endTime;
                 }
             });
+        }
+
+        protected override void PreStart()
+        {
+            Context.IncrementActorCreated();
+        }
+
+        protected override void PostStop()
+        {
+            Context.IncrementActorStopped();
         }
     }
 }
