@@ -1,6 +1,18 @@
 version: '3.4'
 
 services:
+  datadog:
+    image: datadog/agent:7
+    ports:
+      - 8125:8125/udp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+    environment:
+      DD_API_KEY: 927831f7bac6ac9832a3ab5033b9ecd1
+      DD_DOGSTATSD_NON_LOCAL_TRAFFIC: "true"
+
   lighthouse:
     image: ${DOCKER_REGISTRY-}lighthouse
     build:
@@ -22,6 +34,8 @@ services:
      - 8080:5000
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      MonitorTool: datadog
+      MonitorToolCon: datadog
       port: 5000
       akkaport: 7100
       akkaip: akkanetcore
@@ -37,6 +51,8 @@ services:
      - lighthouse    
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      MonitorTool: datadog
+      MonitorToolCon: datadog
       port: 5000
       akkaport: 7000
       akkaip: akkanetcore2
@@ -52,11 +68,27 @@ services:
      - lighthouse    
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      MonitorTool: datadog
+      MonitorToolCon: datadog
       port: 5000
       akkaport: 7000
       akkaip: akkanetcore3
       roles: "akkanet"
       akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"
 
-
-
+  akkanetcore4:
+    image: ${DOCKER_REGISTRY-}akkanetcore
+    build:
+      context: .
+      dockerfile: AkkaNetCore/Dockerfile
+    depends_on:
+     - lighthouse    
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      MonitorTool: datadog
+      MonitorToolCon: datadog
+      port: 5000
+      akkaport: 7000
+      akkaip: akkanetcore4
+      roles: "akkanet"
+      akkaseed: "akka.tcp://actor-cluster@lighthouse:4053"

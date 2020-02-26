@@ -9,7 +9,7 @@ namespace AkkaNetCore.Config
     {
         public string MonitorTool { get; set; }     // none , win, azure
 
-        public string MonitorToolApiKey { get; set; }
+        public string MonitorToolCon { get; set; }
 
     }
 }

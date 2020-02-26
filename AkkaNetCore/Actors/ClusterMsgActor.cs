@@ -36,13 +36,18 @@ namespace AkkaNetCore.Actors
 
             ReceiveAsync<string>(async msg =>
             {
+                if (msgCnt == 0)
+                {
+                    logger.Debug("### FirstMessage ClusterMsgActor");
+                }
+
                 msgCnt++;
                 totalMsgCnt++;
                 //랜덤 Delay를 줌( 외부 요소 : API OR DB )
                 int auto_delay = delay == 0 ? random.Next(1, 100) : delay;
                 await Task.Delay(auto_delay);
                 Context.IncrementCounter("akka.custom.metric1");
-                
+                Context.IncrementCounter("akka.custom.clusteractor");
                 int addCount = 1;
                 CountConsume.Tell(addCount);
 

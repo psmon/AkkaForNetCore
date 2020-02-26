@@ -7,7 +7,7 @@ using Akka.Monitoring;
 
 namespace AkkaNetCore.Actors
 {
-    public class HigPassGateActor : ReceiveActor
+    public class HighPassGateActor : ReceiveActor
     {
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private readonly string id;
@@ -18,7 +18,7 @@ namespace AkkaNetCore.Actors
         
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
-        public HigPassGateActor()
+        public HighPassGateActor()
         {
             id = Guid.NewGuid().ToString();
             logger.Info($"Create HigPassGateActor:{id}");
@@ -27,13 +27,18 @@ namespace AkkaNetCore.Actors
 
             ReceiveAsync<string>(async msg =>
             {
+                if (msgCnt == 0)
+                {
+                    logger.Debug("### FirstMessage HigPassGateActor");
+                }
+
                 msgCnt++;
                 int auto_delay = random.Next(1, 100);
                 await Task.Delay(auto_delay);
                 if (MonitorMode)
                 {
                     Context.IncrementCounter("akka.custom.metric1");
-                    Context.Gauge("akka.messageboxsize", auto_delay);
+                    Context.IncrementCounter("akka.custom.highpassactor");
                 }
 
                 if ((msgCnt % 100) == 0)
@@ -41,7 +46,6 @@ namespace AkkaNetCore.Actors
                     logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
                 }
                     
-
             });
         }
 
@@ -64,6 +68,5 @@ namespace AkkaNetCore.Actors
             if(MonitorMode) Context.IncrementActorStopped();
 
         }
-
     }
 }

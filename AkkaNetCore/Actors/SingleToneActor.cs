@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
 using Akka.Actor;
-using Akka.Cluster;
 using Akka.Event;
 
 namespace AkkaNetCore.Actors
@@ -28,7 +26,7 @@ namespace AkkaNetCore.Actors
                 {
                     DateTime endTime = DateTime.Now;
                     TimeSpan timeSpan = endTime - startTime;                    
-                    logger.Info($"====== 메시지 처리량:{totalCount} TPS:{endTime.Second}");
+                    logger.Info($"====== Process Total:{totalCount} TPS:{endTime.Second}");
                     startTime = endTime;
                 }
             });

@@ -79,7 +79,7 @@ namespace AkkaNetCore
 
             services.AddActor<HigPassGateActorProvider>((provider, actorFactory) =>
             {
-                var actor = actorFactory.ActorOf(Props.Create<HigPassGateActor>()
+                var actor = actorFactory.ActorOf(Props.Create<HighPassGateActor>()
                     .WithDispatcher("fast-dispatcher")
                     //.WithRouter(FromConfig.Instance), "highpass-roundrobin");
                     .WithRouter(FromConfig.Instance), "highpass-gate-pool");        
@@ -181,7 +181,10 @@ namespace AkkaNetCore
 
                 try
                 {
-                    switch (appConfig.MonitorTool)
+                    var MonitorTool = Environment.GetEnvironmentVariable("MonitorTool");
+                    var MonitorToolCon = Environment.GetEnvironmentVariable("MonitorToolCon");
+
+                    switch (MonitorTool)
                     {
                         case "win":
                             var win = ActorMonitoringExtension.RegisterMonitor(actorSystem,
@@ -194,7 +197,7 @@ namespace AkkaNetCore
                                     }));
                             break;
                         case "azure":
-                            var azure = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(appConfig.MonitorToolApiKey));
+                            var azure = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(appConfig.MonitorToolCon));
                             break;
                         case "prometheus":
                             // prometheusMonotor 를 사용하기위해서, MerticServer를 켠다...(수집형 모니터)
@@ -206,7 +209,7 @@ namespace AkkaNetCore
                         case "datadog":
                             var statsdConfig = new StatsdConfig
                             {
-                                StatsdServerName = "127.0.0.1"
+                                StatsdServerName = MonitorToolCon
                             };
                             var dataDog = ActorMonitoringExtension.
                                 RegisterMonitor(actorSystem, new ActorDatadogMonitor(statsdConfig));
