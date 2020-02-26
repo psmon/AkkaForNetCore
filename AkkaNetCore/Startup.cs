@@ -4,6 +4,7 @@ using Akka.Cluster.Routing;
 using Akka.Cluster.Tools.Singleton;
 using Akka.Monitoring;
 using Akka.Monitoring.ApplicationInsights;
+using Akka.Monitoring.Datadog;
 using Akka.Monitoring.PerformanceCounters;
 using Akka.Monitoring.Prometheus;
 using Akka.Routing;
@@ -18,6 +19,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using NLog;
 using Prometheus;
+using StatsdClient;
 using Swashbuckle.AspNetCore.Swagger;
 using static AkkaNetCore.Actors.ActorProviders;
 using IApplicationLifetime = Microsoft.AspNetCore.Hosting.IApplicationLifetime;
@@ -200,6 +202,14 @@ namespace AkkaNetCore
                             metricServer = new MetricServer(10250);
                             metricServer.Start();
                             var prometheus = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorPrometheusMonitor(actorSystem));
+                            break;
+                        case "datadog":
+                            var statsdConfig = new StatsdConfig
+                            {
+                                StatsdServerName = "127.0.0.1"
+                            };
+                            var dataDog = ActorMonitoringExtension.
+                                RegisterMonitor(actorSystem, new ActorDatadogMonitor(statsdConfig));
                             break;
                     }
                 }
