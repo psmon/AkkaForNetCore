@@ -1,5 +1,6 @@
 ﻿using System;
 using Akka.Actor;
+using Akka.Cluster.Routing;
 using Akka.Cluster.Tools.Singleton;
 using Akka.Monitoring;
 using Akka.Monitoring.ApplicationInsights;
@@ -171,9 +172,10 @@ namespace AkkaNetCore
 
                 ActorSystem = actorSystem;
 
-                //TODO : 싱글톤 클러스터 성공시키기
-                //var actor = AkkaBoostrap.BootstrapSingleton<SingleToneActor>(actorSystem, "SingleToneActor", "akkanet");
-                //SingleToneActor = AkkaBoostrap.BootstrapSingletonProxy(actorSystem, "SingleToneActor", "akkanet", "/user/SingleToneActor", "singleToneActorProxy");
+                //싱글톤 클러스터 액터                
+                var actor = AkkaBoostrap.BootstrapSingleton<SingleToneActor>(actorSystem, "SingleToneActor", "akkanet");
+                SingleToneActor = AkkaBoostrap.BootstrapSingletonProxy(actorSystem, "SingleToneActor", "akkanet", "/user/SingleToneActor", "singleToneActorProxy");
+    
 
                 try
                 {

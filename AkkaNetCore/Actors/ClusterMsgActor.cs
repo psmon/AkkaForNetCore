@@ -36,25 +36,19 @@ namespace AkkaNetCore.Actors
 
             ReceiveAsync<string>(async msg =>
             {
-                if(msgCnt < 5)
-                {
-                    logger.Debug($"====== Msg:{msg} Count:{msgCnt}");
-                }
-
                 msgCnt++;
                 totalMsgCnt++;
                 //랜덤 Delay를 줌( 외부 요소 : API OR DB )
                 int auto_delay = delay == 0 ? random.Next(1, 100) : delay;
                 await Task.Delay(auto_delay);
                 Context.IncrementCounter("akka.custom.metric1");
-
-                //TODO : 싱글톤 액터 구현 성공시키기...
-                UInt64 addCount = 1;
-                //CountConsume.Tell(addCount);
+                
+                int addCount = 1;
+                CountConsume.Tell(addCount);
 
                 if ((msgCnt % 100) == 0)
                 {
-                    logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");                    
+                    //logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");                    
                 }
 
             });
