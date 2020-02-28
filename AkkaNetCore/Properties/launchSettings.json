@@ -25,7 +25,7 @@
         "MonitorToolCon": "127.0.0.1",
         "akkaport": "7100",
         "akkaip": "127.0.0.1",
-        "MonitorTool": "datadog",
+        "MonitorTool": "win",
         "akkaseed": "akka.tcp://actor-cluster@127.0.0.1:7100",
         "roles": "akkanet",
         "port": "5000",

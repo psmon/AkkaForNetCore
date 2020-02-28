@@ -1,7 +1,5 @@
 ﻿using System;
 using Akka.Actor;
-using Akka.Cluster.Routing;
-using Akka.Cluster.Tools.Singleton;
 using Akka.Monitoring;
 using Akka.Monitoring.ApplicationInsights;
 using Akka.Monitoring.Datadog;
@@ -20,7 +18,6 @@ using Microsoft.OpenApi.Models;
 using NLog;
 using Prometheus;
 using StatsdClient;
-using Swashbuckle.AspNetCore.Swagger;
 using static AkkaNetCore.Actors.ActorProviders;
 using IApplicationLifetime = Microsoft.AspNetCore.Hosting.IApplicationLifetime;
 
