@@ -56,7 +56,7 @@ namespace AkkaNetCore.Actors
                 Context.IncrementCounter("akka.custom.received1");
 
                 //랜덤 Delay를 줌
-                int auto_delay = delay == 0 ? rnd.Next(300, 1000) : delay;
+                int auto_delay = msg.delay == 0 ? rnd.Next(300, 1000) : msg.delay;
                 await Task.Delay(auto_delay);
 
                 Context.IncrementCounter("akka.custom.received2");

@@ -43,10 +43,17 @@ namespace AkkaNetCore.Controllers
         }
         
         [HttpPost("/gate/cashgate/tell")]
-        public void Cashgate(string value, int count)
+        public void Cashgate(string value, int count, int delay)
         {
             for (int i = 0; i < count; i++)
-                cashPassActor.Tell(value);
+            {
+                var delayMsg = new DelayMsg
+                {
+                    delay = delay,
+                    message = value
+                };
+                cashPassActor.Tell(delayMsg);
+            }
         }
 
         [HttpPost("/gate/cashgate/ask")]
