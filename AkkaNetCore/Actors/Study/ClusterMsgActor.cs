@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Akka;
 using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
@@ -75,7 +76,7 @@ namespace AkkaNetCore.Actors
         }
 
         protected override void PostStop()
-        {
+        {            
             if (ClusterMode) Cluster.Unsubscribe(Self);
 
             Context.IncrementActorStopped();

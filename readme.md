@@ -43,7 +43,7 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
     # Build
     docker build -f LightHouse/Dockerfile --force-rm -t lighthouse:latest --label "com.webnori.created-by=psmon" --label "com.microsoft.visual-studio.project-name=LightHouse" .
 
-    docker build -f AkkaNetCore/Dockerfile --force-rm -t akkanetcore:latest --label "com.webnori.created-by=psmon" --label "com.microsoft.visual-studio.project-name=AkkaNetCore" .    
+    docker build -f AkkaNetCore/Dockerfile --force-rm -t akkanetcore:latest --label "com.webnori.created-by=psmon" --label "com.microsoft.visual-studio.project-name=AkkaNetCore" .
 
 
 ## Local Cluster

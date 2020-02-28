@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Akka;
 using Akka.Actor;
 using Akka.Monitoring;
 using Akka.Monitoring.ApplicationInsights;
@@ -232,7 +234,9 @@ namespace AkkaNetCore
             lifetime.ApplicationStopping.Register(() =>
             {
                 Console.WriteLine("=============== Start Graceful Down ===============");
-                app.ApplicationServices.GetService<ActorSystem>().Terminate().Wait();
+                var actorSystem = app.ApplicationServices.GetService<ActorSystem>();
+                actorSystem.Terminate().Wait();
+
                 Console.WriteLine("=============== Completed Graceful Down ===============");
                 if (appConfig.MonitorTool == "prometheus") metricServer.Stop();
             });
