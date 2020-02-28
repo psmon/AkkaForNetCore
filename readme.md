@@ -5,14 +5,14 @@
 Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단순화하는 라이브러리입니다.
 
 
-소개 : http://wiki.webnori.com/display/AKKA
+소개 : http://wiki.webnori.com/display/webfr/.NET+Core+With+Akka
 
 
 ## 이 저장소의 목적
 
 범용적인 .net core 의 버젼에서, akka.net을 활용하는것을 연습하는 프로젝트입니다.
 
-- .net core : https://dotnet.microsoft.com/download/dotnet-core/2.2
+- net core : https://dotnet.microsoft.com/download/dotnet-core/3.1
 - akka.net : https://getakka.net/articles/intro/modules.html
 
 
@@ -38,7 +38,7 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
 
 ## Local Sigle Node
 
-다음과 같은 옵션으로 싱글 노드로 작동가능합니다.
+다음과 같은 옵션(시드노드를 자신으로 지정)으로 싱글 노드로 작동가능합니다.
 
     launchSetting.json
       "environmentVariables": {
@@ -73,15 +73,6 @@ Docker-Compose로 멀티 인스턴스 구성이 되어 있습니다. - VisualStu
 
 Docker-Compose로 클러스터 구성을 참고하여,  클라우드또는 쿠버네틱스로의 전환이 용이합니다.
 
-## 모니터링
-
-    docker network create -d bridge --subnet 192.170.0.0/24 --gateway 192.170.0.1 dockernet
-
-    docker network inspect dockernet
-
-    http://localhost:9090/status
-
-    http://localhost:10250/metrics
 
 ## 주요 의존 모듈
 
