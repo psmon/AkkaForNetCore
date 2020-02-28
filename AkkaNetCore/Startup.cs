@@ -188,10 +188,18 @@ namespace AkkaNetCore
                                 new ActorPerformanceCountersMonitor(
                                     new CustomMetrics
                                     {
-                                        Counters = { "akka.custom.metric1", "akkacore.message" },
-                                        Gauges = { "akka.messageboxsize" },
+                                        Counters = { 
+                                            "akka.custom.metric1","akka.custom.metric2","akka.custom.metric3",
+                                            "akka.custom.received1", "akka.custom.received2" },
+                                        Gauges = { "akka.gauge.msg10", "akka.gauge.msg100", "akka.gauge.msg1000", "akka.gauge.msg10000" },
                                         Timers = { "akka.handlertime" }
                                     }));
+                            
+                            // 윈도우 성능 모니터링 수집대상항목은 최초 Admin권한으로 akka항목으로 레지스트리에 프로그램실행시 자동 등록되며
+                            // 커스텀항목 결정및 최초 1번 작동후 변경되지 않음으로
+                            // 수집 항목 변경시 아래 Register 삭제후 다시 최초 Admin권한으로 작동
+                            // Actor명으로 매트릭스가 분류됨으로 기능단위의 네이밍이 권장됨
+                            // HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Akka\Performance
                             break;
                         case "azure":
                             var azure = ActorMonitoringExtension.RegisterMonitor(actorSystem, new ActorAppInsightsMonitor(appConfig.MonitorToolCon));

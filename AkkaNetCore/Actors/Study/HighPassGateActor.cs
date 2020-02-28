@@ -27,19 +27,19 @@ namespace AkkaNetCore.Actors
 
             ReceiveAsync<string>(async msg =>
             {
+                if(MonitorMode) Context.IncrementCounter("akka.custom.received1");
+
                 if (msgCnt == 0)
                 {
                     logger.Debug("### FirstMessage HigPassGateActor");
-                }
-
+                }                
                 msgCnt++;
                 int auto_delay = random.Next(1, 100);
                 await Task.Delay(auto_delay);
-                if (MonitorMode)
-                {
-                    Context.IncrementCounter("akka.custom.metric1");
-                    Context.IncrementCounter("akka.custom.highpassactor");
-                }
+
+                logger.Debug($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
+
+                if (MonitorMode) Context.IncrementCounter("akka.custom.received2");
 
                 if ((msgCnt % 100) == 0)
                 {                    

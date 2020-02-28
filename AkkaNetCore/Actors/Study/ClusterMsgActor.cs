@@ -20,7 +20,7 @@ namespace AkkaNetCore.Actors
 
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
-        protected IActorRef CountConsume;        
+        protected IActorRef CountConsume;
 
         public ClusterMsgActor(int delay)
         {
@@ -36,6 +36,8 @@ namespace AkkaNetCore.Actors
 
             ReceiveAsync<string>(async msg =>
             {
+                Context.IncrementCounter("akka.custom.received1");
+
                 if (msgCnt == 0)
                 {
                     logger.Debug("### FirstMessage ClusterMsgActor");
@@ -46,8 +48,9 @@ namespace AkkaNetCore.Actors
                 //랜덤 Delay를 줌( 외부 요소 : API OR DB )
                 int auto_delay = delay == 0 ? random.Next(1, 100) : delay;
                 await Task.Delay(auto_delay);
-                Context.IncrementCounter("akka.custom.metric1");
-                Context.IncrementCounter("akka.custom.clusteractor");
+                
+                Context.IncrementCounter("akka.custom.received2");
+
                 int addCount = 1;
                 CountConsume.Tell(addCount);
 

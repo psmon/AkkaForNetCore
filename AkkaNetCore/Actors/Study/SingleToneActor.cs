@@ -28,7 +28,7 @@ namespace AkkaNetCore.Actors
                     DateTime endTime = DateTime.Now;
                     TimeSpan timeSpan = endTime - startTime;                    
                     logger.Info($"====== Process Total:{totalCount} Seconds(100):{timeSpan.TotalSeconds}");
-                    Context.IncrementCounter("akka.custom.singeactor");
+                    Context.IncrementCounter("akka.custom.received1");
                     Context.Gauge("akka.gauge.msg100", (int)Math.Truncate(timeSpan.TotalMilliseconds) );
                     startTime = endTime;
                 }
