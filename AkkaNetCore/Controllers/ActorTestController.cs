@@ -42,12 +42,14 @@ namespace AkkaNetCore.Controllers
             {
                 var delayMsg = new DelayMsg
                 {
+                    Seq = Guid.NewGuid().ToString(),
                     Delay = delay,
-                    Message = value
+                    Message = value,
+                    State = DelayMsgState.Reserved,                    
                 };
+                Startup.SingleToneActor.Tell(delayMsg);
                 highPassActor.Tell(delayMsg);
             }
-                
         }
         
         [HttpPost("/gate/cashgate/tell")]
@@ -57,6 +59,7 @@ namespace AkkaNetCore.Controllers
             {
                 var delayMsg = new DelayMsg
                 {
+                    Seq = Guid.NewGuid().ToString(),
                     Delay = delay,
                     Message = value
                 };
@@ -71,9 +74,12 @@ namespace AkkaNetCore.Controllers
             {
                 var delayMsg = new DelayMsg
                 {
+                    Seq = Guid.NewGuid().ToString(),
                     Delay = delay,
-                    Message = value
-                };                
+                    Message = value,
+                    State = DelayMsgState.Reserved
+                };
+                Startup.SingleToneActor.Tell(delayMsg);
                 clusterMsgActorProvider.Tell(delayMsg);
             }                
         }

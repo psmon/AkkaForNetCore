@@ -18,6 +18,7 @@ namespace AkkaNetCore.Actors
         private bool MonitorMode = true;
         
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
+        protected IActorRef MaxtRixSingleActor;
 
         public HighPassGateActor()
         {
@@ -25,6 +26,7 @@ namespace AkkaNetCore.Actors
             logger.Info($"Create HigPassGateActor:{id}");
             msgCnt = 0;
             random = new Random();
+            MaxtRixSingleActor = Startup.SingleToneActor;
 
             ReceiveAsync<DelayMsg>(async msg =>
             {
@@ -38,8 +40,15 @@ namespace AkkaNetCore.Actors
 
                 int auto_delay = msg.Delay == 0 ? random.Next(1, 100) : msg.Delay;                
                 await Task.Delay(auto_delay);
-
-                logger.Debug($"Msg:{msg.Message} Count:{msgCnt} Delay:{auto_delay}");
+                
+                var completeMsg = new DelayMsg() 
+                { 
+                    State = DelayMsgState.Completed,
+                    Message = msg.Message,
+                    Seq = msg.Seq
+                };
+                                
+                MaxtRixSingleActor.Tell(completeMsg);
 
                 if (MonitorMode) Context.IncrementCounter("akka.custom.received1");
 

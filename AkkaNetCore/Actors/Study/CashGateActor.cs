@@ -15,6 +15,7 @@ namespace AkkaNetCore.Actors
         private int msgCnt;
         protected IActorRef CountConsume;
 
+
         public CashGateActor()
         {
             rnd = new Random();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Akka;
 using Akka.Actor;
@@ -39,6 +40,8 @@ namespace AkkaNetCore
 
         public static IActorRef SingleToneActor;    //Todo : 다른위치로 옮길것
         public static ActorSystem ActorSystem;
+        private static readonly ManualResetEvent asTerminatedEvent = new ManualResetEvent(false);
+        public static AppSettings AppSettings;
 
         public Startup(IConfiguration configuration)
         {
@@ -46,6 +49,12 @@ namespace AkkaNetCore
         }
 
         public IConfiguration Configuration { get; }
+
+        private async void MemberRemoved(ActorSystem actorSystem)
+        {
+            await actorSystem.Terminate();
+            asTerminatedEvent.Set();
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -163,6 +172,7 @@ namespace AkkaNetCore
 
             MetricServer metricServer = null;
             var appConfig = app.ApplicationServices.GetService<AppSettings>();
+            AppSettings = appConfig;
 
             //APP Life Cycle
             lifetime.ApplicationStarted.Register(() =>
@@ -235,10 +245,15 @@ namespace AkkaNetCore
             {
                 Console.WriteLine("=============== Start Graceful Down ===============");
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>();
-                actorSystem.Terminate().Wait();
-
-                Console.WriteLine("=============== Completed Graceful Down ===============");
+                                
                 if (appConfig.MonitorTool == "prometheus") metricServer.Stop();
+
+                var cluster = Akka.Cluster.Cluster.Get(actorSystem);
+                cluster.RegisterOnMemberRemoved(() => MemberRemoved(actorSystem));
+                cluster.Leave(cluster.SelfAddress);
+                asTerminatedEvent.WaitOne();
+
+                Console.WriteLine($"=============== Completed Graceful Down : {cluster.SelfAddress} ===============");
             });
         }
     }

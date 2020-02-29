@@ -11,5 +11,7 @@ namespace AkkaNetCore.Config
 
         public string MonitorToolCon { get; set; }
 
+        public string DBConnection { get; set; }
+
     }
 }

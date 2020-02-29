@@ -22,7 +22,7 @@ namespace AkkaNetCore.Actors
 
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
 
-        protected IActorRef CountConsume;
+        protected IActorRef MaxtRixSingleActor;
 
         public ClusterMsgActor(int delay)
         {
@@ -34,7 +34,7 @@ namespace AkkaNetCore.Actors
             totalMsgCnt = 0;
             random = new Random();
 
-            CountConsume = Startup.SingleToneActor;
+            MaxtRixSingleActor = Startup.SingleToneActor;
 
             ReceiveAsync<DelayMsg>(async msg =>
             {
@@ -53,7 +53,8 @@ namespace AkkaNetCore.Actors
 
                 Context.IncrementCounter("akka.custom.received1");
 
-                CountConsume.Tell(msg);
+                msg.State = DelayMsgState.Completed;
+                MaxtRixSingleActor.Tell(msg);
 
                 if ((msgCnt % 100) == 0)
                 {
