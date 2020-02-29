@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace AkkaNetCore.Models.Actor
 {
-    public class DelayMsg
+    public class Hello
     {
-        public string Message { get; set; }
-
-        public int Delay { get; set; }
+        public string Role { get; set; }
     }
 }

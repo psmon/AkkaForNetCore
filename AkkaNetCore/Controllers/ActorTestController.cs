@@ -42,8 +42,8 @@ namespace AkkaNetCore.Controllers
             {
                 var delayMsg = new DelayMsg
                 {
-                    delay = delay,
-                    message = value
+                    Delay = delay,
+                    Message = value
                 };
                 highPassActor.Tell(delayMsg);
             }
@@ -57,8 +57,8 @@ namespace AkkaNetCore.Controllers
             {
                 var delayMsg = new DelayMsg
                 {
-                    delay = delay,
-                    message = value
+                    Delay = delay,
+                    Message = value
                 };
                 cashPassActor.Tell(delayMsg);
             }
@@ -71,8 +71,8 @@ namespace AkkaNetCore.Controllers
             {
                 var delayMsg = new DelayMsg
                 {
-                    delay = delay,
-                    message = value
+                    Delay = delay,
+                    Message = value
                 };                
                 clusterMsgActorProvider.Tell(delayMsg);
             }                
@@ -83,8 +83,8 @@ namespace AkkaNetCore.Controllers
         {
             var delayMsg = new DelayMsg
             {
-                delay = 0,
-                message = value
+                Delay = 0,
+                Message = value
             };
             var result = cashPassActor.Ask<string>(delayMsg).Result;
             return result;
