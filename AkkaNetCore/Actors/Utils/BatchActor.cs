@@ -7,9 +7,7 @@ using Akka.Monitoring;
 using AkkaNetCore.Models.Actor;
 using AkkaNetCore.Models.Entity;
 using AkkaNetCore.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Z.EntityFramework.Extensions;
-using Z.EntityFramework.Plus;
 
 
 
@@ -57,30 +55,35 @@ namespace AkkaNetCore.Actors.Utils
                         }                        
                     }
 
+                    string BatchType = "";
+
                     if (bulkItems_reseverd.Count > 0)
                     {
+                        BatchType = "reserved";
                         EntityFrameworkManager.ContextFactory = context => new BatchRepository(Startup.AppSettings);
                         using (var context = new BatchRepository(Startup.AppSettings))
                         {
-                            context.BulkInsert(bulkItems_reseverd, options => {
+                            await context.BulkInsertAsync(bulkItems_reseverd, options => {
                                 options.BatchSize = BatchSize;
                             });
+
                             Context.IncrementCounter("akka.custom.received1", bulkItems_reseverd.Count);
                         }
                     }
 
                     if (bulkItems_completed.Count > 0)
                     {
+                        BatchType = "completed";
                         EntityFrameworkManager.ContextFactory = context => new BatchRepository(Startup.AppSettings);
                         using (var context = new BatchRepository(Startup.AppSettings))
                         {
-                            context.BulkInsert(bulkItems_completed, options => {
+                            await context.BulkInsertAsync(bulkItems_completed, options => {
                                 options.BatchSize = BatchSize;
                             });
                             Context.IncrementCounter("akka.custom.received1", bulkItems_completed.Count);
                         }
                     }
-                    logger.Info("========= BulkInsert:" + batchMessage.Obj.Count.ToString());
+                    logger.Info($"========= Bulk Type:{BatchType} Count:{batchMessage.Obj.Count.ToString()}");
                 }
             });
         }
@@ -93,7 +96,7 @@ namespace AkkaNetCore.Actors.Utils
 
         public BatchActor()
         {
-            CollectSec = 3;
+            CollectSec = 10;
 
             StartWith(State.Idle, Uninitialized.Instance);
 
