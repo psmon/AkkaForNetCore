@@ -23,46 +23,22 @@ namespace AkkaNetCore.Actors
             logger.Info($"Create CashGateActor:{id} {delay}");
             CountConsume = Startup.SingleToneActor;
 
-            ReceiveAsync<string>(async msg =>
-            {
-                msgCnt++;
-
-                Context.IncrementMessagesReceived();
-
-                Context.IncrementCounter("akka.custom.metric2");
-
-                //랜덤 Delay를 줌
-                int auto_delay = delay==0 ? rnd.Next(300,1000) : delay;
-                await Task.Delay(auto_delay);
-
-                if( (msgCnt % 10)==0)
-                    logger.Info($"{msg}-{auto_delay}-{msgCnt}");
-
-                int addCount = 1;
-                CountConsume.Tell(addCount);
-
-                //수신자가 있으면 보낸다.
-                if (!Sender.IsNobody())
-                    Sender.Tell($"정산완료 통과하세요");
-
-            });
-
             ReceiveAsync<DelayMsg>(async msg =>
             {
                 msgCnt++;
 
                 Context.IncrementMessagesReceived();
-
-                Context.IncrementCounter("akka.custom.received1");
-
+                
                 //랜덤 Delay를 줌
                 int auto_delay = msg.delay == 0 ? rnd.Next(300, 1000) : msg.delay;
                 await Task.Delay(auto_delay);
 
-                Context.IncrementCounter("akka.custom.received2");
+                Context.IncrementCounter("akka.custom.received1");
 
                 if ((msgCnt % 10) == 0)
-                    logger.Info($"{msg}-{auto_delay}-{msgCnt}");
+                    logger.Info($"{msg.message}-{auto_delay}-{msgCnt}");
+
+                CountConsume.Tell(msg);
 
                 //수신자가 있으면 보낸다.
                 if (!Sender.IsNobody())

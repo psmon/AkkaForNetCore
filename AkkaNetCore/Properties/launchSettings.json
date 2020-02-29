@@ -19,7 +19,7 @@
     },
     "AkkaNetCore": {
       "commandName": "Project",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger/",
       "environmentVariables": {
         "MonitorToolCon": "127.0.0.1",

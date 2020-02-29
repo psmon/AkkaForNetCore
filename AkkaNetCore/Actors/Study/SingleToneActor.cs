@@ -2,6 +2,7 @@
 using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
+using AkkaNetCore.Models.Actor;
 
 namespace AkkaNetCore.Actors
 {
@@ -19,15 +20,16 @@ namespace AkkaNetCore.Actors
             startTime = DateTime.Now;            
             totalCount = 0;
 
-            ReceiveAsync<int>(async amount =>
+            ReceiveAsync<DelayMsg>(async msg =>
             {
-                totalCount += amount;                                
+                totalCount++;
+                Context.IncrementMessagesReceived();
                 //100개씩마다 로그찍음
                 if ( (totalCount % 100) == 0)
-                {
+                {                    
                     DateTime endTime = DateTime.Now;
                     TimeSpan timeSpan = endTime - startTime;                    
-                    logger.Info($"====== Process Total:{totalCount} Seconds(100):{timeSpan.TotalSeconds}");
+                    logger.Info($"====== Process Total:{totalCount} Seconds(100):{timeSpan.TotalSeconds} Msg:{msg.message}");
                     Context.IncrementCounter("akka.custom.received1");
                     Context.Gauge("akka.gauge.msg100", (int)Math.Truncate(timeSpan.TotalMilliseconds) );
                     startTime = endTime;

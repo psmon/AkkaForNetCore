@@ -4,6 +4,7 @@ using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
 using Akka.Monitoring;
+using AkkaNetCore.Models.Actor;
 
 namespace AkkaNetCore.Actors
 {
@@ -25,25 +26,26 @@ namespace AkkaNetCore.Actors
             msgCnt = 0;
             random = new Random();
 
-            ReceiveAsync<string>(async msg =>
+            ReceiveAsync<DelayMsg>(async msg =>
             {
-                if(MonitorMode) Context.IncrementCounter("akka.custom.received1");
-
+                if (MonitorMode) Context.IncrementMessagesReceived();
+                
                 if (msgCnt == 0)
                 {
                     logger.Debug("### FirstMessage HigPassGateActor");
                 }                
                 msgCnt++;
-                int auto_delay = random.Next(1, 100);
+
+                int auto_delay = msg.delay == 0 ? random.Next(1, 100) : msg.delay;                
                 await Task.Delay(auto_delay);
 
-                logger.Debug($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
+                logger.Debug($"Msg:{msg.message} Count:{msgCnt} Delay:{auto_delay}");
 
-                if (MonitorMode) Context.IncrementCounter("akka.custom.received2");
+                if (MonitorMode) Context.IncrementCounter("akka.custom.received1");
 
                 if ((msgCnt % 100) == 0)
-                {                    
-                    logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");
+                {
+                    logger.Info($"Msg:{msg.message} Count:{msgCnt} Delay:{auto_delay}");
                 }
                     
             });

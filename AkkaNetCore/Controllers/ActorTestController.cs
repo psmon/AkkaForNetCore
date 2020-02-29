@@ -36,10 +36,18 @@ namespace AkkaNetCore.Controllers
         }
         
         [HttpPost("/gate/highpassgate/tell")]
-        public void Highpassgate(string value,int count)
+        public void Highpassgate(string value,int count, int delay)
         {
-            for(int i=0;i<count;i++)
-                highPassActor.Tell(value);
+            for(int i = 0; i < count; i++)
+            {
+                var delayMsg = new DelayMsg
+                {
+                    delay = delay,
+                    message = value
+                };
+                highPassActor.Tell(delayMsg);
+            }
+                
         }
         
         [HttpPost("/gate/cashgate/tell")]
@@ -56,19 +64,30 @@ namespace AkkaNetCore.Controllers
             }
         }
 
+        [HttpPost("/cluster/msg/tell")]
+        public void ClusterMsg(string value, int count, int delay)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var delayMsg = new DelayMsg
+                {
+                    delay = delay,
+                    message = value
+                };                
+                clusterMsgActorProvider.Tell(delayMsg);
+            }                
+        }
+
         [HttpPost("/gate/cashgate/ask")]
         public string CashgateAsk(string value)
         {
-            var result = cashPassActor.Ask<string>(value).Result;
+            var delayMsg = new DelayMsg
+            {
+                delay = 0,
+                message = value
+            };
+            var result = cashPassActor.Ask<string>(delayMsg).Result;
             return result;
-        }
-
-
-        [HttpPost("/cluster/msg/tell")]
-        public void ClusterMsg(string value, int count)
-        {
-            for (int i = 0; i < count; i++)
-                clusterMsgActorProvider.Tell(value);
         }
 
     }

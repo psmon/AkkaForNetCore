@@ -7,6 +7,7 @@ using Akka.Event;
 using Akka.Monitoring;
 using AkkaNetCore.Config;
 using AkkaNetCore.Extensions;
+using AkkaNetCore.Models.Actor;
 
 namespace AkkaNetCore.Actors
 {
@@ -35,10 +36,10 @@ namespace AkkaNetCore.Actors
 
             CountConsume = Startup.SingleToneActor;
 
-            ReceiveAsync<string>(async msg =>
+            ReceiveAsync<DelayMsg>(async msg =>
             {
-                Context.IncrementCounter("akka.custom.received1");
-
+                Context.IncrementMessagesReceived();
+                
                 if (msgCnt == 0)
                 {
                     logger.Debug("### FirstMessage ClusterMsgActor");
@@ -47,13 +48,12 @@ namespace AkkaNetCore.Actors
                 msgCnt++;
                 totalMsgCnt++;
                 //랜덤 Delay를 줌( 외부 요소 : API OR DB )
-                int auto_delay = delay == 0 ? random.Next(1, 100) : delay;
+                int auto_delay = msg.delay == 0 ? random.Next(1, 100) : msg.delay;
                 await Task.Delay(auto_delay);
-                
-                Context.IncrementCounter("akka.custom.received2");
 
-                int addCount = 1;
-                CountConsume.Tell(addCount);
+                Context.IncrementCounter("akka.custom.received1");
+
+                CountConsume.Tell(msg);
 
                 if ((msgCnt % 100) == 0)
                 {
