@@ -8,9 +8,10 @@ using NUnit.Framework;
 
 namespace AkkaNetCoreTest.Actors
 {
+    // 특정기간동안 집계된 벌크 컬렉션은 이 액터에게 온다.
     public class TestBatchWriterActor : ReceiveActor
     {
-        IActorRef probe;
+        protected IActorRef probe;
 
         public TestBatchWriterActor(IActorRef _probe)
         {
@@ -28,7 +29,7 @@ namespace AkkaNetCoreTest.Actors
 
     class BatchActorTest : TestKit
     {
-        TestProbe probe;
+        protected TestProbe probe;
 
         [SetUp]
         public void Setup()
@@ -93,7 +94,7 @@ namespace AkkaNetCoreTest.Actors
             batchActor.Tell(new Queue("오브젝트2"));
             batchActor.Tell(new Queue("오브젝트3"));
 
-            //collectSec 이전에는 처리할것이 없다.
+            //cutoffSec 이전에는 처리할것이 없다.
             probe.ExpectNoMsg(TimeSpan.FromSeconds(cutoffSec));
         }
     }
