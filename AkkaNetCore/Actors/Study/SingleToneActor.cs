@@ -24,11 +24,11 @@ namespace AkkaNetCore.Actors
         public SingleToneActor()
         {
             BatchWriter_Rev = Context.ActorOf<BatchWriterActor>();
-            BatchManager_Rev = Context.ActorOf<BatchActor>();
+            BatchManager_Rev = Context.ActorOf(Props.Create(() => new BatchActor(10)));
             BatchManager_Rev.Tell(new SetTarget(BatchWriter_Rev));
 
             BatchWriter_Comp = Context.ActorOf<BatchWriterActor>();
-            BatchManager_Comp = Context.ActorOf<BatchActor>();
+            BatchManager_Comp = Context.ActorOf(Props.Create(() => new BatchActor(10)));
             BatchManager_Comp.Tell(new SetTarget(BatchWriter_Comp));
 
 

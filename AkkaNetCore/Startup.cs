@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
-using Akka;
 using Akka.Actor;
 using Akka.Monitoring;
 using Akka.Monitoring.ApplicationInsights;

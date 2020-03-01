@@ -1,6 +1,16 @@
-﻿// 참고:
-//https://petabridge.com/blog/how-to-unit-test-akkadotnet-actors-akka-testkit/
-//https://getakka.net/articles/actors/testing-actor-systems.html
+﻿// 참고: 유닛테스트가 QA에 대한 커버리지를 높이는데 유용하냐? 와는 별도로
+// 유닛테스트 작성은 개발코드 퀄리티를 높이는데 크게 기여한다.
+// 비동기로 항상 작동하는 실시간 메시징을 검사하는 방법을 알아보자~
+//
+// 나쁜 개발 패턴의예:
+// 1. DI에 의존한나머지, 자신이 만든 객체를 ZeroBase 에서 생성 하는방법을 알지 못한다.(DI가 나쁜게아닌,DI의 노예가되어 개발수준이 낮아지는것을 의미한다.)
+// 2. 자신의 코드는, 디펀던시가 복잡한 서비스 내에서만 작동가능 하고 예측불가다.(몬스터를 계속 만들어내고 있다.)
+// 3. 최초 작성되고 수정된모듈이 기대 작동에대한 정의가 없기때문에, 이것을 수정한 사람은 상상력을 동원하고,항상 다르게 작동한고 심지어 개선된 것처럼 보이기까지 한다.
+
+// Unit Test 참고링크
+// https://docs.microsoft.com/ko-kr/dotnet/core/testing/unit-testing-with-nunit
+// https://getakka.net/articles/actors/testing-actor-systems.html
+// https://petabridge.com/blog/how-to-unit-test-akkadotnet-actors-akka-testkit/
 
 using System;
 using Akka.Actor;

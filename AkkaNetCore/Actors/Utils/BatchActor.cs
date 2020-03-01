@@ -94,9 +94,9 @@ namespace AkkaNetCore.Actors.Utils
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private int CollectSec;
 
-        public BatchActor()
+        public BatchActor(int _CollectSec)
         {
-            CollectSec = 10;
+            CollectSec = _CollectSec;
 
             StartWith(State.Idle, Uninitialized.Instance);
 
