@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AkkaNetCore.Models.Entity
 {
     [Table("tbl_message_completed")]
-    public class MessageCompleted
+    public class MessageCompleted : BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

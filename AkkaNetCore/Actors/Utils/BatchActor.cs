@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
-using AkkaNetCore.Models.Actor;
+using AkkaNetCore.Models.Message;
 using AkkaNetCore.Models.Entity;
 using AkkaNetCore.Repositories;
 using Z.EntityFramework.Extensions;

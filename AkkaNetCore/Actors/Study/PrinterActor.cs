@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
-using AkkaNetCore.Models.Actor;
+using AkkaNetCore.Models.Message;
 
 namespace AkkaNetCore.Actors
 {

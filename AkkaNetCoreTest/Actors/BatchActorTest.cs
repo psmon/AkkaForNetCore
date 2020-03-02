@@ -3,7 +3,7 @@ using Akka.Actor;
 using Akka.TestKit;
 using Akka.TestKit.NUnit3;
 using AkkaNetCore.Actors.Utils;
-using AkkaNetCore.Models.Actor;
+using AkkaNetCore.Models.Message;
 using NUnit.Framework;
 
 namespace AkkaNetCoreTest.Actors

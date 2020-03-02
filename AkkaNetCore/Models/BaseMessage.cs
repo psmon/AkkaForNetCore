@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AkkaNetCore.Models.Actor
+namespace AkkaNetCore.Models
 {
-    public class Hello
+    public class BaseMessage
     {
-        public string Role { get; set; }
     }
 }

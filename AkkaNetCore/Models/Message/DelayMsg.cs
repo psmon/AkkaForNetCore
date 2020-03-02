@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Threading.Tasks;
-using Akka.Actor;
-using Akka.Event;
 
-namespace AkkaNetCore.Models.Actor
+namespace AkkaNetCore.Models.Message
 {
     public enum DelayMsgState
     {
@@ -14,7 +8,7 @@ namespace AkkaNetCore.Models.Actor
         Completed = 1
     }
 
-    public class DelayMsg
+    public class DelayMsg : BaseMessage
     {
         public String Seq { get; set; }
 

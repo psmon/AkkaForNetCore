@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Reflection;
 using System.Threading;
 using Akka.Actor;
 using Akka.Monitoring;
@@ -53,6 +55,8 @@ namespace AkkaNetCore
             await actorSystem.Terminate();
             asTerminatedEvent.Set();
         }
+
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -112,9 +116,9 @@ namespace AkkaNetCore
 
 
             // Swagger
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(options =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo
+                options.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
                     Title = AppName,
@@ -132,10 +136,15 @@ namespace AkkaNetCore
                         Url = new Uri(DocUrl),
                     }
                 });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                options.IncludeXmlComments(xmlPath);
             });
 
             // API주소룰 소문자로...
-            services.AddRouting(options => options.LowercaseUrls = true);
+            //services.AddRouting(options => options.LowercaseUrls = true);
 
         }
 

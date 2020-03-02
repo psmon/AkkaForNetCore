@@ -2,7 +2,7 @@
 using System.Collections.Immutable;
 using Akka.Actor;
 
-namespace AkkaNetCore.Models.Actor
+namespace AkkaNetCore.Models.Message
 {
     // received events
     public class SetTarget
@@ -54,7 +54,7 @@ namespace AkkaNetCore.Models.Actor
         private Uninitialized() { }
     }
 
-    public class Todo : IData
+    public class Todo : BaseMessage,IData
     {
         public Todo(IActorRef target, ImmutableList<object> queue)
         {

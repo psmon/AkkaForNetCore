@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Akka.Actor;
-using AkkaNetCore.Models.Actor;
+using AkkaNetCore.Models.Message;
 using Microsoft.AspNetCore.Mvc;
 using static AkkaNetCore.Actors.ActorProviders;
 
@@ -27,15 +27,29 @@ namespace AkkaNetCore.Controllers
             cashPassActor = _cashGateActorProvider();
             clusterMsgActorProvider = _clusterMsgActorProvider();
         }
-        
-        [HttpPost("/printer/tell")]
+
+        /// <summary>
+        /// 프린트 액터
+        /// </summary>
+        /// <response code="200">성공</response>
+        /// <response code="412">
+        /// ....         
+        /// </response>
+        [HttpPost("/Single/Printer/tell")]
         public void Printer([FromBody] PrintPage value)
         {
             // 프린팅을 요청한다.
             printerActor.Tell(value);
         }
-        
-        [HttpPost("/gate/highpassgate/tell")]
+
+        /// <summary>
+        /// 단일노드 - HighPassGate
+        /// </summary>
+        /// <response code="200">성공</response>
+        /// <response code="412">
+        /// ....         
+        /// </response>
+        [HttpPost("/Single/Highpassgate/tell")]
         public void Highpassgate(string value,int count, int delay)
         {
             for(int i = 0; i < count; i++)
@@ -51,8 +65,15 @@ namespace AkkaNetCore.Controllers
                 highPassActor.Tell(delayMsg);
             }
         }
-        
-        [HttpPost("/gate/cashgate/tell")]
+
+        /// <summary>
+        /// 단일노드 - CashGate
+        /// </summary>
+        /// <response code="200">성공</response>
+        /// <response code="412">
+        /// ....         
+        /// </response>
+        [HttpPost("/Single/Cashgate/tell")]
         public void Cashgate(string value, int count, int delay)
         {
             for (int i = 0; i < count; i++)
@@ -67,8 +88,34 @@ namespace AkkaNetCore.Controllers
             }
         }
 
-        [HttpPost("/cluster/msg/tell")]
-        public void ClusterMsg(string value, int count, int delay)
+        /// <summary>
+        /// 단일노드 - CashGate Ask 패턴
+        /// </summary>
+        /// <response code="200">성공</response>
+        /// <response code="412">
+        /// ....         
+        /// </response>
+        [HttpPost("/Single/Cashgate/ask")]
+        public string CashgateAsk(string value)
+        {
+            var delayMsg = new DelayMsg
+            {
+                Delay = 0,
+                Message = value
+            };
+            var result = cashPassActor.Ask<string>(delayMsg).Result;
+            return result;
+        }
+
+        /// <summary>
+        /// 클러스터노드 - 메시지전송
+        /// </summary>
+        /// <response code="200">성공</response>
+        /// <response code="412">
+        /// ....         
+        /// </response>
+        [HttpPost("/Cluster/msg/tell")]
+        public void Cluster(string value, int count, int delay)
         {
             for (int i = 0; i < count; i++)
             {
@@ -82,18 +129,6 @@ namespace AkkaNetCore.Controllers
                 Startup.SingleToneActor.Tell(delayMsg);
                 clusterMsgActorProvider.Tell(delayMsg);
             }                
-        }
-
-        [HttpPost("/gate/cashgate/ask")]
-        public string CashgateAsk(string value)
-        {
-            var delayMsg = new DelayMsg
-            {
-                Delay = 0,
-                Message = value
-            };
-            var result = cashPassActor.Ask<string>(delayMsg).Result;
-            return result;
         }
 
     }

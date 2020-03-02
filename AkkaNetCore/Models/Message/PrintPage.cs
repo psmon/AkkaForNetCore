@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AkkaNetCore.Models.Actor
+﻿namespace AkkaNetCore.Models.Message
 {
-    public class PrintPage
+    public class PrintPage : BaseMessage
     {
         public int SeqNo { get; set; }
         

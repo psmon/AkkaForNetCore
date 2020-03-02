@@ -7,7 +7,7 @@ using Akka.Event;
 using Akka.Monitoring;
 using AkkaNetCore.Config;
 using AkkaNetCore.Extensions;
-using AkkaNetCore.Models.Actor;
+using AkkaNetCore.Models.Message;
 
 namespace AkkaNetCore.Actors
 {
