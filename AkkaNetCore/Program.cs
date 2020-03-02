@@ -23,7 +23,8 @@ namespace AkkaNetCore
             }
             else
             {
-                LogManager.LoadConfiguration(nlogEnvironment == "" ? "NLog.config" : $"NLog.{nlogEnvironment}.config");
+                LogManager.LoadConfiguration("NLog.Development.config");
+                //LogManager.LoadConfiguration(nlogEnvironment == "" ? "NLog.config" : $"NLog.{nlogEnvironment}.config");
             }
 
             CreateHostBuilder(args).Build().Run();

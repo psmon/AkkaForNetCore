@@ -10,6 +10,11 @@ namespace AkkaNetCore.Config
     {
         public static Akka.Configuration.Config Load(string environment, IConfiguration configuration)
         {
+            if(environment.ToLower()!= "production")
+            {
+                environment = "Development";
+            }
+
             return LoadConfig(environment, "akka{0}.conf", configuration);
         }
 

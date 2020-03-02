@@ -38,10 +38,10 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
     솔류션이 위치한 디렉토리에서 명령수행
 
     ## LightHouse : Akka의 클러스터를 위한 시드노드이며 아파치의 주키퍼와 유사한 기능을 수행합니다.
-
-
     # Build
     docker build -f LightHouse/Dockerfile --force-rm -t lighthouse:latest --label "com.webnori.created-by=psmon" --label "com.microsoft.visual-studio.project-name=LightHouse" .
+    # LightHouse (SeedNode) : 시드는 도커활용
+    docker run -e CLUSTER_IP=127.0.0.1 -e CLUSTER_PORT=4053 -e CLUSTER_SEEDS=akka.tcp://actor-cluster@127.0.0.1:4053 --publish 4053:4053 --name netcore_lighthouse lighthouse:latest
 
     docker build -f AkkaNetCore/Dockerfile --force-rm -t akkanetcore:latest --label "com.webnori.created-by=psmon" --label "com.microsoft.visual-studio.project-name=AkkaNetCore" .
 
@@ -55,16 +55,13 @@ akkaip/akkaport : 자신의 ip/port이며 충돌이 안나도록 설정
 akkaseed : Akka 클러스터 시드를 관리
 빌드 특성 : node1을 실행시만 빌드, 이후 노드는 동일 빌드를 사용
 
-    # LightHouse (SeedNode) : 시드는 도커활용
-    docker run -e CLUSTER_IP=127.0.0.1 -e CLUSTER_PORT=4053 -e CLUSTER_SEEDS=akka.tcp://actor-cluster@127.0.0.1:4053 --publish 4053:4053 --name netcore_lighthouse lighthouse:latest
+    # 멀티 노드 : 첫번째 노드를 Seed로 작동시켜 스탠드얼론 작동가능
 
-    # 멀티 노드 어플리케이션(콘솔모드로 작동)
-
-    dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 7100 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053 --MonitorTool win
+    dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 7100 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
     
-    dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053 --MonitorTool win
+    dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
     
-    dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5003 --akkaip 127.0.0.1 --akkaport 5103 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:4053 --MonitorTool win
+    dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5003 --akkaip 127.0.0.1 --akkaport 5103 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
 
 
 ## Docker-Compose Cluster
