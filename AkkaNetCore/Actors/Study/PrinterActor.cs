@@ -31,8 +31,9 @@ namespace AkkaNetCore.Actors
 
                 //남은 토너 용량 물어봄
                 var msg =await tonerActor.Ask("남은용량?");
-                logger.Debug($"ASK결과:{msg}");
+                if (null != Sender) Sender.Tell(msg);
 
+                logger.Debug($"ASK결과:{msg}");
                 logger.Debug($"페이지 출력 완료:{page}");
             });
 

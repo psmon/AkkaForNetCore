@@ -72,6 +72,8 @@ Docker-Compose로 멀티 인스턴스 구성이 되어 있습니다. - VisualStu
 
 Docker-Compose로 클러스터 구성을 참고하여,  클라우드또는 쿠버네틱스로의 전환이 용이합니다.
 
+more info : https://docs.microsoft.com/ko-kr/dotnet/architecture/microservices/multi-container-microservice-net-applications/multi-container-applications-docker-compose
+
 
 ## 주요 의존 모듈
 

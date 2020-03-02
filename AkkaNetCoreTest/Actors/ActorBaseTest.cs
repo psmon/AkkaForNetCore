@@ -13,6 +13,7 @@
 // https://petabridge.com/blog/how-to-unit-test-akkadotnet-actors-akka-testkit/
 
 using System;
+using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.TestKit;
 using Akka.TestKit.NUnit3;
@@ -46,6 +47,31 @@ namespace AkkaNetCoreTest.Actors
                 };
                 cashGate.Tell(msg);
                 ExpectMsg("정산완료 통과하세요");
+            });
+        }
+
+        [TestCase(300)]
+        public async Task Actor_TransferTo_ActorRef(int cutoff)
+        {
+            // Printer -> Toner -> TestProbe
+            var toner = Sys.ActorOf(Props.Create(() => new TonerActor()),"toner");            
+            var printer = Sys.ActorOf(Props.Create(() => new PrinterActor()), "printer");
+
+            //토너 관찰자 설정
+            toner.Tell(probe.Ref);
+
+            Within(TimeSpan.FromMilliseconds(cutoff), () =>
+            {
+                //프린터를 요청한다.
+                printer.Tell(new PrintPage()
+                {
+                    SeqNo = 1,
+                    DelayForPrint = 1,
+                    Content = "test"
+                });
+
+                //관찰자의 메시지를 조사하여, 토너량을 알아낸다.
+                probe.ExpectMsg("남은 용량은 4 입니다.");
             });
         }
     }

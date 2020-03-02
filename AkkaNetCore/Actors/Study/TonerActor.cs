@@ -12,6 +12,7 @@ namespace AkkaNetCore.Actors
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private readonly string id;
         private int tonerAmount = 5;
+        IActorRef probe;
 
         public TonerActor()
         {
@@ -34,9 +35,19 @@ namespace AkkaNetCore.Actors
             {
                 if (msg == "남은용량?")
                 {
-                    Sender.Tell($"남은 용량은 {tonerAmount} 입니다.");
+                    string response = $"남은 용량은 {tonerAmount} 입니다.";
+                    Sender.Tell(response);
+
+                    // Forward는 메시지가 중재자를 통과하더라도 원래 발신자 주소가 유지됨,라우터,복제기등에 유용
+                    if (probe != null) probe.Forward(response);
                 }
             });
+
+            ReceiveAsync<IActorRef>(async msg =>
+            {
+                probe = msg;
+            });
+
         }
     }
 }
