@@ -13,19 +13,22 @@ namespace AkkaNetCore.Actors
     {
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private readonly string id;
+        private ActorSelection tonerActor;
 
         public PrinterActor()
         {
             id = Guid.NewGuid().ToString();
             logger.Info($"프린터 액터 생성:{id}");
-            
+
+            //주소로 액터를 선택하기 : 위치투명성,참조객체를 얻기위해 DI가 복잡해질필요 없다,그리고 이것은 리모트로확장시 코드변화가없다.
+            tonerActor = Context.System.ActorSelection("user/toner");
+
             ReceiveAsync<PrintPage>(async page =>
             {
                 logger.Debug($"프린터 요청 들어옴:{page}");
                 await Task.Delay(page.DelayForPrint);
 
-                //주소로 액터를 선택하기 : 장점 생성자에 참조객체를 가질필요가 없다.
-                ActorSelection tonerActor = Context.System.ActorSelection("user/toner");                
+                
                 //토너를 비동기로 소모시킴
                 tonerActor.Tell(1);
 
