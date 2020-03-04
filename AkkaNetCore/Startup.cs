@@ -12,6 +12,7 @@ using Akka.Routing;
 using AkkaNetCore.Actors;
 using AkkaNetCore.Config;
 using AkkaNetCore.Extensions;
+using AkkaNetCore.Models.Message;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -55,8 +56,6 @@ namespace AkkaNetCore
             await actorSystem.Terminate();
             asTerminatedEvent.Set();
         }
-
-
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -254,6 +253,11 @@ namespace AkkaNetCore
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>();
                                 
                 if (appConfig.MonitorTool == "prometheus") metricServer.Stop();
+
+                // Graceful Down Test,Using CashGateActor Actor
+                IActorRef cashGate = app.ApplicationServices.GetService<CashGateActorProvider>()();
+                cashGate.Ask(new StopActor()).Wait();
+
 
                 var cluster = Akka.Cluster.Cluster.Get(actorSystem);
                 cluster.RegisterOnMemberRemoved(() => MemberRemoved(actorSystem));

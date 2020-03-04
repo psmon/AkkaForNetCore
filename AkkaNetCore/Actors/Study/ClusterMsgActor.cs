@@ -42,7 +42,7 @@ namespace AkkaNetCore.Actors
                 
                 if (msgCnt == 0)
                 {
-                    logger.Debug("### FirstMessage ClusterMsgActor");
+                    logger.Debug($"### Message ClusterMsgActor {msgCnt}");
                 }
 
                 msgCnt++;

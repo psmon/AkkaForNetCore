@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
@@ -14,6 +15,7 @@ namespace AkkaNetCore.Actors
         private Random rnd;
         private int msgCnt;
         protected IActorRef CountConsume;
+        private readonly ManualResetEvent asTerminatedEvent = new ManualResetEvent(false);
 
 
         public CashGateActor()
@@ -31,23 +33,31 @@ namespace AkkaNetCore.Actors
                 Context.IncrementMessagesReceived();
                 Context.IncrementCounter("akka.custom.received1");
 
-                if ((msgCnt % 10) == 0)
-                    logger.Info($"{msg.Message}--{msgCnt}");
+                logger.Info($"{msg.Message}--{msgCnt}");
 
-                if(null!=CountConsume) CountConsume.Tell(msg);
+                if (null!=CountConsume) CountConsume.Tell(msg);
+
+                //정산 소요 시간
+                int auto_delay = msg.Delay == 0 ? rnd.Next(300, 1000) : msg.Delay;
+                await Task.Delay(auto_delay);
 
                 //수신자가 있으면 보낸다.
                 if (!Sender.IsNobody())
                 {
                     if (msg.Message == "정산해주세요")
                     {
-                        //정산 소요 시간
-                        int auto_delay = msg.Delay == 0 ? rnd.Next(300, 1000) : msg.Delay;
-                        await Task.Delay(auto_delay);
+
                         Sender.Tell($"정산완료 통과하세요");
                     }
                 }                    
             });
+
+            ReceiveAsync<StopActor>(async msg =>
+            {
+                Sender.Tell("Done");
+                Context.Stop(Self);
+            });
+
         }
 
         protected override void PreStart()

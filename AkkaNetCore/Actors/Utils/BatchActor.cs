@@ -19,6 +19,8 @@ namespace AkkaNetCore.Actors.Utils
         private readonly ILoggingAdapter logger = Context.GetLogger();
 
         private readonly int BatchSize = 1000;
+
+        private readonly bool IsWriteDB = false;
         
         public BatchWriterActor()
         {
@@ -57,7 +59,7 @@ namespace AkkaNetCore.Actors.Utils
 
                     string BatchType = "";
 
-                    if (bulkItems_reseverd.Count > 0)
+                    if (bulkItems_reseverd.Count > 0 && IsWriteDB)
                     {
                         BatchType = "reserved";
                         EntityFrameworkManager.ContextFactory = context => new BatchRepository(Startup.AppSettings);
@@ -71,7 +73,7 @@ namespace AkkaNetCore.Actors.Utils
                         }
                     }
 
-                    if (bulkItems_completed.Count > 0)
+                    if (bulkItems_completed.Count > 0 && IsWriteDB)
                     {
                         BatchType = "completed";
                         EntityFrameworkManager.ContextFactory = context => new BatchRepository(Startup.AppSettings);
@@ -83,6 +85,7 @@ namespace AkkaNetCore.Actors.Utils
                             Context.IncrementCounter("akka.custom.received1", bulkItems_completed.Count);
                         }
                     }
+
                     logger.Info($"========= Bulk Type:{BatchType} Count:{batchMessage.Obj.Count.ToString()}");
                 }
             });
