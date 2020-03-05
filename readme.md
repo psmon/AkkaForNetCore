@@ -57,11 +57,11 @@ akkaseed : Akka 클러스터 시드를 관리
 
     # 멀티 노드 : 첫번째 노드를 Seed로 작동시켜 스탠드얼론 작동가능
 
-    dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 7100 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
+    dotnet run  --configuration Release --project AkkaNetCore --environment "Development" --port 5001 --akkaip 127.0.0.1 --akkaport 7100 --roles akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
     
-    dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
+    dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5002 --akkaip 127.0.0.1 --akkaport 5102 --roles akkanet,apiwork --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
     
-    dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5003 --akkaip 127.0.0.1 --akkaport 5103 --role akkanet --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
+    dotnet run --no-build --configuration Release --project AkkaNetCore --environment "Development" --port 5003 --akkaip 127.0.0.1 --akkaport 5103 --roles akkanet,apiwork --akkaseed akka.tcp://actor-cluster@127.0.0.1:7100 --MonitorTool win
 
 
 ## Docker-Compose Cluster

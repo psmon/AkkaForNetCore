@@ -191,7 +191,13 @@ namespace AkkaNetCore
                             "cluster-roundrobin"
                 ));
 
-
+                AkkaLoad.RegisterActor(
+                    "clusterRoundRobin2",
+                    actorSystem.ActorOf(Props.Create<ClusterMsgActor>()
+                            .WithDispatcher("fast-dispatcher")
+                            .WithRouter(FromConfig.Instance),
+                            "cluster-roundrobin2"
+                ));
 
                 //싱글톤 클러스터 액터     
                 var actor = actorSystem.BootstrapSingleton<SingleToneActor>("SingleToneActor", "akkanet");

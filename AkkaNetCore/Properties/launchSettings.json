@@ -27,7 +27,7 @@
         "akkaip": "127.0.0.1",
         "MonitorTool": "win",
         "akkaseed": "akka.tcp://actor-cluster@127.0.0.1:7100",
-        "roles": "akkanet",
+        "roles": "akkanet,apiwork",
         "port": "5000",
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

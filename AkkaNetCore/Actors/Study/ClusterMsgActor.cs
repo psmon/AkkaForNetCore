@@ -40,7 +40,7 @@ namespace AkkaNetCore.Actors
             {
                 Context.IncrementMessagesReceived();
                 
-                if (msgCnt == 0)
+                if (msgCnt < 10)
                 {
                     logger.Debug($"### Message ClusterMsgActor {msgCnt}");
                 }
@@ -58,7 +58,7 @@ namespace AkkaNetCore.Actors
 
                 if ((msgCnt % 100) == 0)
                 {
-                    //logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");                    
+                    logger.Info($"Msg:{msg} Count:{msgCnt} Delay:{auto_delay}");                    
                 }
 
             });

@@ -14,7 +14,8 @@ namespace AkkaNetCore.Controllers
         private readonly IActorRef printerActor;
         private readonly IActorRef highPassActor;
         private readonly IActorRef cashPassActor;
-        private readonly IActorRef clusterMsgActorProvider;
+        private readonly IActorRef clusterRoundbin1;
+        private readonly IActorRef clusterRoundbin2;
 
 
         public ActorTestController()
@@ -22,7 +23,8 @@ namespace AkkaNetCore.Controllers
             printerActor = AkkaLoad.ActorSelect("printer");
             highPassActor = AkkaLoad.ActorSelect("highpass");
             cashPassActor = AkkaLoad.ActorSelect("cashpass");
-            clusterMsgActorProvider = AkkaLoad.ActorSelect("clusterRoundRobin");
+            clusterRoundbin1 = AkkaLoad.ActorSelect("clusterRoundRobin");
+            clusterRoundbin2 = AkkaLoad.ActorSelect("clusterRoundRobin2");
         }
 
         /// <summary>
@@ -106,12 +108,13 @@ namespace AkkaNetCore.Controllers
 
         /// <summary>
         /// 클러스터노드 - 메시지전송
+        /// role : akkanet
         /// </summary>
         /// <response code="200">성공</response>
         /// <response code="412">
         /// ....         
         /// </response>
-        [HttpPost("/Cluster/msg/tell")]
+        [HttpPost("/Cluster/msg/akkanet/tell")]
         public void Cluster(string value, int count, int delay)
         {
             for (int i = 0; i < count; i++)
@@ -124,8 +127,33 @@ namespace AkkaNetCore.Controllers
                     State = DelayMsgState.Reserved
                 };
                 Startup.SingleToneActor.Tell(delayMsg);
-                clusterMsgActorProvider.Tell(delayMsg);
+                clusterRoundbin1.Tell(delayMsg);
             }                
+        }
+
+        /// <summary>
+        /// 클러스터노드 - 메시지전송
+        /// role : apiwork
+        /// </summary>
+        /// <response code="200">성공</response>
+        /// <response code="412">
+        /// ....         
+        /// </response>
+        [HttpPost("/Cluster/msg/apiwork/tell")]
+        public void ClusterApiWork(string value, int count, int delay)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var delayMsg = new DelayMsg
+                {
+                    Seq = Guid.NewGuid().ToString(),
+                    Delay = delay,
+                    Message = value,
+                    State = DelayMsgState.Reserved
+                };
+                Startup.SingleToneActor.Tell(delayMsg);
+                clusterRoundbin2.Tell(delayMsg);
+            }
         }
 
     }
