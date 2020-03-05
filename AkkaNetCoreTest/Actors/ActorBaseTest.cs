@@ -55,7 +55,7 @@ namespace AkkaNetCoreTest.Actors
         {
             // Printer -> Toner -> TestProbe
             var toner = Sys.ActorOf(Props.Create(() => new TonerActor()),"toner");            
-            var printer = Sys.ActorOf(Props.Create(() => new PrinterActor()), "printer");
+            var printer = Sys.ActorOf(Props.Create(() => new PrinterActor(null)), "printer");
 
             //토너 관찰자 설정
             toner.Tell(probe.Ref);

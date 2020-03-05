@@ -3,6 +3,8 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using Akka.Actor;
+using Akka.DI.Core;
+using Akka.DI.Extensions.DependencyInjection;
 using Akka.Monitoring;
 using Akka.Monitoring.ApplicationInsights;
 using Akka.Monitoring.Datadog;
@@ -13,6 +15,7 @@ using AkkaNetCore.Actors;
 using AkkaNetCore.Config;
 using AkkaNetCore.Extensions;
 using AkkaNetCore.Models.Message;
+using AkkaNetCore.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,9 +25,7 @@ using Microsoft.OpenApi.Models;
 using NLog;
 using Prometheus;
 using StatsdClient;
-using static AkkaNetCore.Actors.ActorProviders;
 using IApplicationLifetime = Microsoft.AspNetCore.Hosting.IApplicationLifetime;
-
 
 
 namespace AkkaNetCore
@@ -65,55 +66,11 @@ namespace AkkaNetCore
 
             services.AddSingleton(Configuration.GetSection("AppSettings").Get<AppSettings>());// * AppSettings
 
-            // *** Akka Service Setting
-            var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            services.AddAkka(SystemNameForCluster, AkkaConfig.Load(envName,Configuration) );
-
-            services.AddActor<PrinterActorProvider>((provider, actorFactory) =>
-            {
-                var printerActor = actorFactory.ActorOf(Props.Create<PrinterActor>()
-                    .WithDispatcher("custom-dispatcher")
-                    .WithRouter(FromConfig.Instance).WithDispatcher("custom-task-dispatcher"),
-                    "printer-pool");
-
-                return () => printerActor;
-            });
-
-            services.AddActor<TonerActorProvider>((provider, actorFactory) =>
-            {
-                var tonerActor = actorFactory.ActorOf(Props.Create(() => new TonerActor()).WithRouter(new RoundRobinPool(1)),
-                    "toner");
-                return () => tonerActor;
-            });
-
-            services.AddActor<HigPassGateActorProvider>((provider, actorFactory) =>
-            {
-                var actor = actorFactory.ActorOf(Props.Create<HighPassGateActor>()
-                    .WithDispatcher("fast-dispatcher")
-                    //.WithRouter(FromConfig.Instance), "highpass-roundrobin");
-                    .WithRouter(FromConfig.Instance), "highpass-gate-pool");        
-                return () => actor;
-            });
-
-            services.AddActor<CashGateActorProvider>((provider, actorFactory) =>
-            {
-                var actor = actorFactory.ActorOf(Props.Create<CashGateActor>()
-                    .WithDispatcher("slow-dispatcher")
-                    .WithRouter(FromConfig.Instance), "cashpass-gate-pool");
-                return () => actor;
-            });
-
-
-            // For Cluster
-            services.AddActor<ClusterMsgActorProvider>((provider, actorFactory) =>
-            {
-                var actor = actorFactory.ActorOf(Props.Create<ClusterMsgActor>(0)
-                    .WithDispatcher("fast-dispatcher")
-                    .WithRouter(FromConfig.Instance), "cluster-roundrobin");
-                return () => actor;
-            });
-
-
+            // 액터에 DI적용시 사용
+            services.AddSingleton<KafkaService>();            
+            services.AddScoped<TonerActor>();
+            services.AddScoped<PrinterActor>();
+            
             // Swagger
             services.AddSwaggerGen(options =>
             {
@@ -142,6 +99,14 @@ namespace AkkaNetCore
                 options.IncludeXmlComments(xmlPath);
             });
 
+            // *** Akka Service Setting            
+            var envName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var akkaConfig = AkkaLoad.Load(envName, Configuration);
+            var actorSystem = ActorSystem.Create(SystemNameForCluster, akkaConfig);
+            var provider = services.BuildServiceProvider();
+            actorSystem.UseServiceProvider(provider);
+            services.AddAkka(actorSystem);
+
             // API주소룰 소문자로...
             //services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -149,13 +114,7 @@ namespace AkkaNetCore
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IApplicationLifetime lifetime)
-        {
-            app.UserActor(lifetime, typeof(PrinterActorProvider))
-                .UserActor(lifetime, typeof(TonerActorProvider))
-                .UserActor(lifetime, typeof(HigPassGateActorProvider))
-                .UserActor(lifetime, typeof(ClusterMsgActorProvider))
-                .UserActor(lifetime, typeof(CashGateActorProvider));
-
+        {            
             app.UseSwagger();
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.               
@@ -180,19 +139,63 @@ namespace AkkaNetCore
             var appConfig = app.ApplicationServices.GetService<AppSettings>();
             AppSettings = appConfig;
 
+
             //APP Life Cycle
             lifetime.ApplicationStarted.Register(() =>
             {
                 app.ApplicationServices.GetService<ILogger>();
 
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
-
                 ActorSystem = actorSystem;
 
-                //싱글톤 클러스터 액터                
-                var actor = AkkaBoostrap.BootstrapSingleton<SingleToneActor>(actorSystem, "SingleToneActor", "akkanet");
-                SingleToneActor = AkkaBoostrap.BootstrapSingletonProxy(actorSystem, "SingleToneActor", "akkanet", "/user/SingleToneActor", "singleToneActorProxy");
-    
+                //액터생성
+
+                // DI 연동
+                AkkaLoad.RegisterActor(
+                    "toner",
+                    actorSystem.ActorOf(actorSystem.DI().Props<TonerActor>()
+                        .WithRouter(new RoundRobinPool(1)),
+                        "toner"
+                ));
+
+                AkkaLoad.RegisterActor(
+                    "printer",
+                    actorSystem.ActorOf(actorSystem.DI().Props<PrinterActor>()
+                            .WithDispatcher("custom-dispatcher")
+                            .WithRouter(FromConfig.Instance).WithDispatcher("custom-task-dispatcher"),
+                            "printer-pool"
+                ));
+
+                // DI 미연동 
+                AkkaLoad.RegisterActor(
+                    "highpass",
+                    actorSystem.ActorOf(Props.Create<HighPassGateActor>()
+                            .WithDispatcher("fast-dispatcher")
+                            .WithRouter(FromConfig.Instance),
+                            "highpass-gate-pool"
+                ));
+
+                AkkaLoad.RegisterActor(
+                    "cashpass",
+                    actorSystem.ActorOf(Props.Create<CashGateActor>()
+                            .WithDispatcher("slow-dispatcher")
+                            .WithRouter(FromConfig.Instance),
+                            "cashpass-gate-pool"
+                ));
+
+                AkkaLoad.RegisterActor(
+                    "clusterRoundRobin",
+                    actorSystem.ActorOf(Props.Create<ClusterMsgActor>()
+                            .WithDispatcher("fast-dispatcher")
+                            .WithRouter(FromConfig.Instance),
+                            "cluster-roundrobin"
+                ));
+
+
+
+                //싱글톤 클러스터 액터     
+                var actor = actorSystem.BootstrapSingleton<SingleToneActor>("SingleToneActor", "akkanet");
+                SingleToneActor = actorSystem.BootstrapSingletonProxy("SingleToneActor", "akkanet", "/user/SingleToneActor", "singleToneActorProxy");
 
                 try
                 {
@@ -254,9 +257,8 @@ namespace AkkaNetCore
                                 
                 if (appConfig.MonitorTool == "prometheus") metricServer.Stop();
 
-                // Graceful Down Test,Using CashGateActor Actor
-                IActorRef cashGate = app.ApplicationServices.GetService<CashGateActorProvider>()();
-                cashGate.Ask(new StopActor()).Wait();
+                // Graceful Down Test,Using CashGateActor Actor                
+                AkkaLoad.ActorSelect("cashpass").Ask(new StopActor()).Wait();
 
 
                 var cluster = Akka.Cluster.Cluster.Get(actorSystem);

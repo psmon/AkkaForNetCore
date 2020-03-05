@@ -8,8 +8,7 @@ using AkkaNetCore.Models.Message;
 using AkkaNetCore.Models.Entity;
 using AkkaNetCore.Repositories;
 using Z.EntityFramework.Extensions;
-
-
+using AkkaNetCore.Service;
 
 namespace AkkaNetCore.Actors.Utils
 {
@@ -21,9 +20,9 @@ namespace AkkaNetCore.Actors.Utils
         private readonly int BatchSize = 1000;
 
         private readonly bool IsWriteDB = false;
-        
+
         public BatchWriterActor()
-        {
+        {            
             ReceiveAsync<object>(async message =>
             {                
                 if (message is Batch batchMessage)

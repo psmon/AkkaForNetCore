@@ -24,7 +24,7 @@ namespace AkkaNetCore.Actors
 
         protected IActorRef MaxtRixSingleActor;
 
-        public ClusterMsgActor(int delay)
+        public ClusterMsgActor()
         {
             id = Guid.NewGuid().ToString();
 

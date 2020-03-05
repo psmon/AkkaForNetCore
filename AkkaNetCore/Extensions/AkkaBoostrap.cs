@@ -1,14 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Cluster.Tools.Singleton;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using AkkaConfig = Akka.Configuration.Config;
 
 namespace AkkaNetCore.Extensions
 {
     public static class AkkaBoostrap
     {
+        public static IServiceCollection AddAkka(this IServiceCollection services, ActorSystem actorSystem)
+        {
+            // Register ActorSystem
+            services.AddSingleton<ActorSystem>((provider) => actorSystem );
+            return services;
+        }
+        
+
         public static IActorRef BootstrapSingleton<T>(this ActorSystem system, string name, string role = null) where T : ActorBase
         {
             var props = ClusterSingletonManager.Props(
@@ -26,5 +34,7 @@ namespace AkkaNetCore.Extensions
 
             return system.ActorOf(props, proxyname);
         }
+
+
     }
 }

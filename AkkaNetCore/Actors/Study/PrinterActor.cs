@@ -6,6 +6,7 @@ using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
 using AkkaNetCore.Models.Message;
+using AkkaNetCore.Service;
 
 namespace AkkaNetCore.Actors
 {
@@ -14,9 +15,12 @@ namespace AkkaNetCore.Actors
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private readonly string id;
         private ActorSelection tonerActor;
+        private KafkaService kafkaService;
 
-        public PrinterActor()
+        public PrinterActor(KafkaService _kafkaService)
         {
+            kafkaService = _kafkaService;
+
             id = Guid.NewGuid().ToString();
             logger.Info($"프린터 액터 생성:{id}");
 

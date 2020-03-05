@@ -5,6 +5,7 @@ using Akka.Event;
 using Akka.Monitoring;
 using AkkaNetCore.Actors.Utils;
 using AkkaNetCore.Models.Message;
+using AkkaNetCore.Service;
 
 namespace AkkaNetCore.Actors
 {

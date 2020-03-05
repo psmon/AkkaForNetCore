@@ -1,14 +1,31 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Akka.Actor;
 using Akka.Configuration;
 using Microsoft.Extensions.Configuration;
+using AkkaConfig = Akka.Configuration.Config;
+using System;
+using System.Collections.Concurrent;
 
 namespace AkkaNetCore.Config
 {
-    public class AkkaConfig
+    public class AkkaLoad
     {
-        public static Akka.Configuration.Config Load(string environment, IConfiguration configuration)
+        public static ConcurrentDictionary<string, IActorRef> ActorList = new ConcurrentDictionary<string, IActorRef>();
+
+        public static void RegisterActor(string name, IActorRef actorRef)
+        {
+            if (ActorList.ContainsKey(name)) throw new Exception("이미 등록된 액터입니다.");
+            ActorList[name] = actorRef;
+        }
+
+        public static IActorRef ActorSelect(string name)
+        {
+            return ActorList[name];
+        }
+
+        public static AkkaConfig Load(string environment, IConfiguration configuration)
         {
             if(environment.ToLower()!= "production")
             {
@@ -18,7 +35,7 @@ namespace AkkaNetCore.Config
             return LoadConfig(environment, "akka{0}.conf", configuration);
         }
 
-        private static Akka.Configuration.Config LoadConfig(string environment, string configFile, IConfiguration configuration)
+        private static AkkaConfig LoadConfig(string environment, string configFile, IConfiguration configuration)
         {
             string akkaip = configuration.GetSection("akkaip").Value ?? "127.0.0.1";
             string akkaport = configuration.GetSection("akkaport").Value ?? "5100";

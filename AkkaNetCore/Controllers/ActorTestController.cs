@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Akka.Actor;
+using AkkaNetCore.Config;
 using AkkaNetCore.Models.Message;
 using Microsoft.AspNetCore.Mvc;
-using static AkkaNetCore.Actors.ActorProviders;
+
 
 namespace AkkaNetCore.Controllers
 {
@@ -19,13 +17,12 @@ namespace AkkaNetCore.Controllers
         private readonly IActorRef clusterMsgActorProvider;
 
 
-        public ActorTestController(PrinterActorProvider _printerActorProvider,
-            HigPassGateActorProvider _higPassGateActorProvider,CashGateActorProvider _cashGateActorProvider, ClusterMsgActorProvider _clusterMsgActorProvider)
+        public ActorTestController()
         {
-            printerActor = _printerActorProvider();
-            highPassActor = _higPassGateActorProvider();
-            cashPassActor = _cashGateActorProvider();
-            clusterMsgActorProvider = _clusterMsgActorProvider();
+            printerActor = AkkaLoad.ActorSelect("printer");
+            highPassActor = AkkaLoad.ActorSelect("highpass");
+            cashPassActor = AkkaLoad.ActorSelect("cashpass");
+            clusterMsgActorProvider = AkkaLoad.ActorSelect("clusterRoundRobin");
         }
 
         /// <summary>
