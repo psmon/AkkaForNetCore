@@ -16,16 +16,27 @@ namespace AkkaNetCore.Controllers
         private readonly IActorRef cashPassActor;
         private readonly IActorRef clusterRoundbin1;
         private readonly IActorRef clusterRoundbin2;
+        private readonly IActorRef basicActor;
 
 
         public ActorTestController()
         {
+            basicActor = AkkaLoad.ActorSelect("basic");
             printerActor = AkkaLoad.ActorSelect("printer");
             highPassActor = AkkaLoad.ActorSelect("highpass");
             cashPassActor = AkkaLoad.ActorSelect("cashpass");
             clusterRoundbin1 = AkkaLoad.ActorSelect("clusterRoundRobin");
             clusterRoundbin2 = AkkaLoad.ActorSelect("clusterRoundRobin2");
         }
+
+        [HttpPost("/Single/Basic/tell")]
+        public void Printer(string message)
+        {
+            // basicActor 요청한다.
+            basicActor.Tell(message);
+        }
+
+
 
         /// <summary>
         /// 프린트 액터

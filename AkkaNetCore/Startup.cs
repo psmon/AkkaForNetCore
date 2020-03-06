@@ -12,6 +12,7 @@ using Akka.Monitoring.PerformanceCounters;
 using Akka.Monitoring.Prometheus;
 using Akka.Routing;
 using AkkaNetCore.Actors;
+using AkkaNetCore.Actors.Study;
 using AkkaNetCore.Config;
 using AkkaNetCore.Extensions;
 using AkkaNetCore.Models.Message;
@@ -149,6 +150,11 @@ namespace AkkaNetCore
                 ActorSystem = actorSystem;
 
                 //액터생성
+                AkkaLoad.RegisterActor(
+                    "basic",
+                    actorSystem.ActorOf(Props.Create<BasicActor>(),
+                    "basic"
+                ));
 
                 // DI 연동
                 AkkaLoad.RegisterActor(

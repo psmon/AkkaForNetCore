@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
 using Akka.Actor;
 using Akka.Configuration;
 using Microsoft.Extensions.Configuration;
 using AkkaConfig = Akka.Configuration.Config;
-using System;
-using System.Collections.Concurrent;
 
 namespace AkkaNetCore.Config
 {
@@ -41,7 +40,6 @@ namespace AkkaNetCore.Config
             string akkaport = configuration.GetSection("akkaport").Value ?? "5100";
             string akkaseed = configuration.GetSection("akkaseed").Value ?? "127.0.0.1:5100";
             string roles = configuration.GetSection("roles").Value ?? "akkanet";
-
 
             var configFilePath = string.Format(configFile, environment.ToLower() != "production" ? string.Concat(".", environment) : "");
             if (File.Exists(configFilePath))
