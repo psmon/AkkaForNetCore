@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using Akka;
 using Akka.Actor;
 using Akka.Event;
-using Akka.Streams;
 using Akka.Monitoring;
+using Akka.Streams;
 using Akka.Streams.Dsl;
-using AkkaNetCore.Models.Entity;
 using AkkaNetCore.Models.Message;
-using AkkaNetCore.Repositories;
-using Z.EntityFramework.Extensions;
-using System.Linq;
 
 namespace AkkaNetCore.Actors.Utils
 {
@@ -44,8 +39,7 @@ namespace AkkaNetCore.Actors.Utils
                         factorials
                              //.ZipWith(Source.From(Enumerable.Range(0, 100)), (num, idx) => $"{idx}! = {num}")
                              .Throttle(element, TimeSpan.FromSeconds(1), maxBust, ThrottleMode.Shaping)
-                             .RunForeach(obj => {
-                                 //consumer.Tell("");
+                             .RunForeach(obj => {                                 
                                  var nowstr = DateTime.Now.ToString("mm:ss");
                                  if(obj is DelayMsg delayMsg)
                                  {                                     
