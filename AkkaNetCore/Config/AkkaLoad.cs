@@ -13,10 +13,11 @@ namespace AkkaNetCore.Config
     {
         public static ConcurrentDictionary<string, IActorRef> ActorList = new ConcurrentDictionary<string, IActorRef>();
 
-        public static void RegisterActor(string name, IActorRef actorRef)
+        public static IActorRef RegisterActor(string name, IActorRef actorRef)
         {
             if (ActorList.ContainsKey(name)) throw new Exception("이미 등록된 액터입니다.");
             ActorList[name] = actorRef;
+            return actorRef;
         }
 
         public static IActorRef ActorSelect(string name)

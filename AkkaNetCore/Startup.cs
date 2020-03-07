@@ -13,6 +13,7 @@ using Akka.Monitoring.Prometheus;
 using Akka.Routing;
 using AkkaNetCore.Actors;
 using AkkaNetCore.Actors.Study;
+using AkkaNetCore.Actors.Utils;
 using AkkaNetCore.Config;
 using AkkaNetCore.Extensions;
 using AkkaNetCore.Models.Message;
@@ -202,6 +203,14 @@ namespace AkkaNetCore
                             "cluster-roundrobin"
                 ));
 
+                // 스트림 - 밸브조절액터
+                int timeSec = 1;
+                var throttleActor = AkkaLoad.RegisterActor(
+                    "throttleActor",
+                    actorSystem.ActorOf(Props.Create<ThrottleActor>(timeSec)
+                ));
+                var throttleWork = actorSystem.ActorOf(Props.Create<ThrottleWork>(5,1));
+                throttleActor.Tell(new SetTarget(throttleWork));
 
                 try
                 {

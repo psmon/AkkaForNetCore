@@ -18,7 +18,7 @@ namespace AkkaNetCore.Controllers
         
         private readonly IActorRef basicActor;
         private readonly IActorRef singleToneActor;
-
+        private readonly IActorRef throttleActor;
 
         public ActorTestController()
         {
@@ -28,6 +28,7 @@ namespace AkkaNetCore.Controllers
             cashPassActor = AkkaLoad.ActorSelect("cashpass");
             clusterRoundbin1 = AkkaLoad.ActorSelect("clusterRoundRobin");
             singleToneActor = AkkaLoad.ActorSelect("SingleToneActor");
+            throttleActor = AkkaLoad.ActorSelect("throttleActor");
         }
 
         [HttpPost("/Single/Basic/tell")]
@@ -115,6 +116,29 @@ namespace AkkaNetCore.Controllers
             };
             var result = cashPassActor.Ask<string>(delayMsg).Result;
             return result;
+        }
+
+        /// <summary>
+        /// 스트림 - 밸비조절
+        /// </summary>
+        /// <response code="200">성공</response>
+        /// <response code="412">
+        /// ....         
+        /// </response>
+        [HttpPost("/Stream/Throttle/tell")]
+        public void ThrottleTell(string value, int count)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                var delayMsg = new DelayMsg
+                {
+                    Seq = Guid.NewGuid().ToString(),
+                    Delay = 1,
+                    Message = $"{value} -Seq:{i}",
+                    State = DelayMsgState.Reserved,
+                };
+                throttleActor.Tell(new Queue(delayMsg));
+            }
         }
 
         /// <summary>

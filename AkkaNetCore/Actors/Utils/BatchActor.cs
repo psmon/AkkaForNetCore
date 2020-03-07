@@ -4,11 +4,10 @@ using System.Collections.Immutable;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
-using AkkaNetCore.Models.Message;
 using AkkaNetCore.Models.Entity;
+using AkkaNetCore.Models.Message;
 using AkkaNetCore.Repositories;
 using Z.EntityFramework.Extensions;
-using AkkaNetCore.Service;
 
 namespace AkkaNetCore.Actors.Utils
 {
