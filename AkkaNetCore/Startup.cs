@@ -40,8 +40,7 @@ namespace AkkaNetCore
         private string DocUrl = "http://wiki.webnori.com/display/webfr/.NET+Core+With+Akka";
 
         static public string SystemNameForCluster = "actor-cluster";
-
-        public static IActorRef SingleToneActor;    //Todo : 다른위치로 옮길것
+        
         public static ActorSystem ActorSystem;
         private static readonly ManualResetEvent asTerminatedEvent = new ManualResetEvent(false);
         public static AppSettings AppSettings;
@@ -149,6 +148,12 @@ namespace AkkaNetCore
                 var actorSystem = app.ApplicationServices.GetService<ActorSystem>(); // start Akka.NET
                 ActorSystem = actorSystem;
 
+                //싱글톤 클러스터 액터     
+                actorSystem.BootstrapSingleton<SingleToneActor>("SingleToneActor", "akkanet");
+                var singleToneActor = actorSystem.BootstrapSingletonProxy("SingleToneActor", "akkanet", "/user/SingleToneActor", "singleToneActorProxy");
+                AkkaLoad.RegisterActor("SingleToneActor", singleToneActor);
+
+
                 //액터생성
                 AkkaLoad.RegisterActor(
                     "basic",
@@ -191,23 +196,12 @@ namespace AkkaNetCore
 
                 AkkaLoad.RegisterActor(
                     "clusterRoundRobin",
-                    actorSystem.ActorOf(Props.Create<ClusterMsgActor>()
+                    actorSystem.ActorOf(Props.Create<ClusterPoolActor>()
                             .WithDispatcher("fast-dispatcher")
                             .WithRouter(FromConfig.Instance),
                             "cluster-roundrobin"
                 ));
 
-                AkkaLoad.RegisterActor(
-                    "clusterRoundRobin2",
-                    actorSystem.ActorOf(Props.Create<ClusterMsgActor>()
-                            .WithDispatcher("fast-dispatcher")
-                            .WithRouter(FromConfig.Instance),
-                            "cluster-roundrobin2"
-                ));
-
-                //싱글톤 클러스터 액터     
-                var actor = actorSystem.BootstrapSingleton<SingleToneActor>("SingleToneActor", "akkanet");
-                SingleToneActor = actorSystem.BootstrapSingletonProxy("SingleToneActor", "akkanet", "/user/SingleToneActor", "singleToneActorProxy");
 
                 try
                 {

@@ -15,8 +15,9 @@ namespace AkkaNetCore.Controllers
         private readonly IActorRef highPassActor;
         private readonly IActorRef cashPassActor;
         private readonly IActorRef clusterRoundbin1;
-        private readonly IActorRef clusterRoundbin2;
+        
         private readonly IActorRef basicActor;
+        private readonly IActorRef singleToneActor;
 
 
         public ActorTestController()
@@ -26,7 +27,7 @@ namespace AkkaNetCore.Controllers
             highPassActor = AkkaLoad.ActorSelect("highpass");
             cashPassActor = AkkaLoad.ActorSelect("cashpass");
             clusterRoundbin1 = AkkaLoad.ActorSelect("clusterRoundRobin");
-            clusterRoundbin2 = AkkaLoad.ActorSelect("clusterRoundRobin2");
+            singleToneActor = AkkaLoad.ActorSelect("SingleToneActor");
         }
 
         [HttpPost("/Single/Basic/tell")]
@@ -35,8 +36,6 @@ namespace AkkaNetCore.Controllers
             // basicActor 요청한다.
             basicActor.Tell(message);
         }
-
-
 
         /// <summary>
         /// 프린트 액터
@@ -71,7 +70,8 @@ namespace AkkaNetCore.Controllers
                     Message = value,
                     State = DelayMsgState.Reserved,                    
                 };
-                Startup.SingleToneActor.Tell(delayMsg);
+                
+                singleToneActor.Tell(delayMsg);
                 highPassActor.Tell(delayMsg);
             }
         }
@@ -137,34 +137,9 @@ namespace AkkaNetCore.Controllers
                     Message = value,
                     State = DelayMsgState.Reserved
                 };
-                Startup.SingleToneActor.Tell(delayMsg);
+                singleToneActor.Tell(delayMsg);
                 clusterRoundbin1.Tell(delayMsg);
             }                
-        }
-
-        /// <summary>
-        /// 클러스터노드 - 메시지전송
-        /// role : apiwork
-        /// </summary>
-        /// <response code="200">성공</response>
-        /// <response code="412">
-        /// ....         
-        /// </response>
-        [HttpPost("/Cluster/msg/apiwork/tell")]
-        public void ClusterApiWork(string value, int count, int delay)
-        {
-            for (int i = 0; i < count; i++)
-            {
-                var delayMsg = new DelayMsg
-                {
-                    Seq = Guid.NewGuid().ToString(),
-                    Delay = delay,
-                    Message = value,
-                    State = DelayMsgState.Reserved
-                };
-                Startup.SingleToneActor.Tell(delayMsg);
-                clusterRoundbin2.Tell(delayMsg);
-            }
         }
 
     }

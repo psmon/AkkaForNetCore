@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
 using Akka.Monitoring;
+using AkkaNetCore.Config;
 using AkkaNetCore.Models.Message;
 
-namespace AkkaNetCore.Actors
+namespace AkkaNetCore.Actors.Study
 {
     public class CashGateActor : ReceiveActor
     {
@@ -24,7 +25,7 @@ namespace AkkaNetCore.Actors
             id = Guid.NewGuid().ToString();
             msgCnt = 0;
             logger.Info($"Create CashGateActor:{id}");
-            CountConsume = Startup.SingleToneActor;
+            CountConsume = AkkaLoad.ActorSelect("SingleToneActor");
 
             ReceiveAsync<DelayMsg>(async msg =>
             {

@@ -4,9 +4,10 @@ using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
 using Akka.Monitoring;
+using AkkaNetCore.Config;
 using AkkaNetCore.Models.Message;
 
-namespace AkkaNetCore.Actors
+namespace AkkaNetCore.Actors.Study
 {
     public class HighPassGateActor : ReceiveActor
     {
@@ -18,7 +19,7 @@ namespace AkkaNetCore.Actors
         private bool MonitorMode = true;
         
         protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
-        protected IActorRef MaxtRixSingleActor;
+        protected IActorRef MatrixSingleActor;
 
         public HighPassGateActor()
         {
@@ -26,7 +27,7 @@ namespace AkkaNetCore.Actors
             logger.Info($"Create HigPassGateActor:{id}");
             msgCnt = 0;
             random = new Random();
-            MaxtRixSingleActor = Startup.SingleToneActor;
+            MatrixSingleActor = AkkaLoad.ActorSelect("SingleToneActor");
 
             ReceiveAsync<DelayMsg>(async msg =>
             {
@@ -48,7 +49,7 @@ namespace AkkaNetCore.Actors
                     Seq = msg.Seq
                 };
                                 
-                MaxtRixSingleActor.Tell(completeMsg);
+                MatrixSingleActor.Tell(completeMsg);
 
                 if (MonitorMode) Context.IncrementCounter("akka.custom.received1");
 

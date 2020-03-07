@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.Event;
 
-namespace AkkaNetCore.Actors
+namespace AkkaNetCore.Actors.Study
 {
     public class TonerActor : ReceiveActor
     {

@@ -7,7 +7,7 @@ using AkkaNetCore.Actors.Utils;
 using AkkaNetCore.Models.Message;
 using AkkaNetCore.Service;
 
-namespace AkkaNetCore.Actors
+namespace AkkaNetCore.Actors.Study
 {
     public class SingleToneActor : ReceiveActor
     {

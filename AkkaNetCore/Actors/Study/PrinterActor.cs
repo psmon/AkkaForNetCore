@@ -8,7 +8,7 @@ using Akka.Monitoring;
 using AkkaNetCore.Models.Message;
 using AkkaNetCore.Service;
 
-namespace AkkaNetCore.Actors
+namespace AkkaNetCore.Actors.Study
 {
     public class PrinterActor : ReceiveActor
     {
