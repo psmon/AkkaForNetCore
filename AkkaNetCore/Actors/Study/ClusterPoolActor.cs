@@ -27,13 +27,15 @@ namespace AkkaNetCore.Actors.Study
 
         private ActorMaterializer materializer;
 
+        private int WorkCount = 1;
+
         public ClusterPoolActor()
         {
             materializer = Context.Materializer();
 
             workActor = Context.ActorOf(Props.Create<ClusterWorkActor>()
-                .WithDispatcher("fast-dispatcher")
-                .WithRouter(new RoundRobinPool(100))
+                .WithDispatcher("fast-dispatcher")                
+                .WithRouter(new RoundRobinPool(WorkCount))
             );
 
             ReceiveAsync<DelayMsg>(async msg =>
