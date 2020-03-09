@@ -7,10 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="akka.kafka.conf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="akka.kafka.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Akka.Cluster" Version="1.4.1-rc1" />
     <PackageReference Include="Akka.Cluster.Tools" Version="1.4.1-rc1" />
     <PackageReference Include="Akka.DI.Extensions.DependencyInjection" Version="1.4.1-beta" />
     <PackageReference Include="Akka.Streams" Version="1.4.1-rc1" />
+    <PackageReference Include="Akka.Streams.Kafka" Version="1.0.0-rc1" />
     <PackageReference Include="Akka.Streams.TestKit" Version="1.4.1-rc1" />
     <PackageReference Include="Akka.TestKit" Version="1.4.1-rc1" />    
     <PackageReference Include="Akka.TestKit.Xunit2" Version="1.4.1-rc1" />
