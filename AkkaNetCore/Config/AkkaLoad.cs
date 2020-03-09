@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Akka.Actor;
-using Akka.Configuration;
+using Hocon;
 using Microsoft.Extensions.Configuration;
-using AkkaConfig = Akka.Configuration.Config;
+using AkkaConfig = Hocon.Config;
 
 namespace AkkaNetCore.Config
 {
@@ -48,18 +49,58 @@ namespace AkkaNetCore.Config
             var configFilePath = string.Format(configFile, environment.ToLower() != "production" ? string.Concat(".", environment) : "");
             if (File.Exists(configFilePath))
             {
-                string config = File.ReadAllText(configFilePath, Encoding.UTF8)
-                    .Replace("$akkaport", akkaport)
+                string akkaseed_array;
+                if (akkaseed.Split(",").Length > 1)
+                {
+                    akkaseed_array = akkaseed.Split(",").Aggregate("[",
+                        (current, seed) => current + @"""" + seed + @""", ");
+                    akkaseed_array += "]";
+                }
+                else
+                {
+                    akkaseed_array = "[\"" + akkaseed + "\"]";
+                }
+
+                string roles_array;
+                if (roles.Split(",").Length > 1)
+                {
+                    roles_array = roles.Split(",").Aggregate("[",
+                        (current, role) => current + @"""" + role + @""", ");
+                    roles_array += "]";
+                }
+                else
+                {
+                    roles_array = "[\"" + roles + "\"]";
+                }
+
+                string customConfig = @"
+                akka {
+	                remote {
+		                log-remote-lifecycle-events = debug
+                        dot-netty.tcp {
+                            port = $akkaport
+			                hostname = $akkaip
+                        }
+                    }
+	                cluster {
+                        seed-nodes = $akkaseed
+                        roles = $roles
+                    }
+                }    
+                ".Replace("$akkaport", akkaport)
                                 .Replace("$akkaip", akkaip)
-                                .Replace("$akkaseed", akkaseed)
-                                .Replace("$roles", roles);
+                                .Replace("$akkaseed", akkaseed_array)
+                                .Replace("$roles", roles_array);
 
-                var akkaConfig = ConfigurationFactory.ParseString(config);
+                AkkaConfig injectedClusterConfigString = customConfig;
 
-                Console.WriteLine($"=== AkkaConfig:{configFilePath}\r\n{akkaConfig}\r\n===");
-                return akkaConfig;
+                var akkaConfig = HoconConfigurationFactory.FromFile(configFilePath);
+                var finalConfig = injectedClusterConfigString.WithFallback(akkaConfig);
+
+                Console.WriteLine($"=== AkkaConfig:{configFilePath}\r\n{finalConfig}\r\n===");
+                return finalConfig;
             }
-            return Akka.Configuration.Config.Empty;
+            return HoconConfigurationFactory.Empty;
         }
     }
 }

@@ -2,9 +2,9 @@
 using System.IO;
 using System.Linq;
 using Akka.Actor;
-using Akka.Bootstrap.Docker;
-using Akka.Configuration;
+using AkkaConfig = Hocon.Config;
 using static System.String;
+using Hocon;
 
 namespace LightHouse
 {
@@ -26,11 +26,7 @@ namespace LightHouse
             var useDocker = !(IsNullOrEmpty(Environment.GetEnvironmentVariable("CLUSTER_IP")?.Trim()) ||
                              IsNullOrEmpty(Environment.GetEnvironmentVariable("CLUSTER_SEEDS")?.Trim()));
 
-            var clusterConfig = ConfigurationFactory.ParseString(File.ReadAllText("akka.hocon"));
-
-            // If none of the environment variables expected by Akka.Bootstrap.Docker are set, use only what's in HOCON
-            if (useDocker)
-                clusterConfig = clusterConfig.BootstrapFromDocker();
+            var clusterConfig = HoconConfigurationFactory.ParseString(File.ReadAllText("akka.hocon"));            
 
             var lighthouseConfig = clusterConfig.GetConfig("lighthouse");
             if (lighthouseConfig != null && IsNullOrEmpty(systemName))
@@ -54,7 +50,7 @@ namespace LightHouse
 
             var seeds = clusterConfig.GetStringList("akka.cluster.seed-nodes").ToList();
 
-            Config injectedClusterConfigString = null;
+            AkkaConfig injectedClusterConfigString = null;
 
 
             if (!seeds.Contains(selfAddress))
