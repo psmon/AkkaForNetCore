@@ -5,6 +5,7 @@ using Akka.Actor;
 using AkkaConfig = Hocon.Config;
 using static System.String;
 using Hocon;
+using Akka.Bootstrap.Docker;
 
 namespace LightHouse
 {
@@ -25,8 +26,11 @@ namespace LightHouse
 
             var useDocker = !(IsNullOrEmpty(Environment.GetEnvironmentVariable("CLUSTER_IP")?.Trim()) ||
                              IsNullOrEmpty(Environment.GetEnvironmentVariable("CLUSTER_SEEDS")?.Trim()));
+            
+            var clusterConfig = HoconConfigurationFactory.ParseString(File.ReadAllText("akka.hocon"));
 
-            var clusterConfig = HoconConfigurationFactory.ParseString(File.ReadAllText("akka.hocon"));            
+            if (useDocker)
+                clusterConfig = clusterConfig.BootstrapFromDocker();
 
             var lighthouseConfig = clusterConfig.GetConfig("lighthouse");
             if (lighthouseConfig != null && IsNullOrEmpty(systemName))

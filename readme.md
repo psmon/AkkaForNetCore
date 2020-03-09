@@ -39,8 +39,10 @@ Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단
 
     ## LightHouse : Akka의 클러스터를 위한 시드노드이며 아파치의 주키퍼와 유사한 기능을 수행합니다.
     # Build
+
     docker build -f LightHouse/Dockerfile --force-rm -t lighthouse:latest --label "com.webnori.created-by=psmon" --label "com.microsoft.visual-studio.project-name=LightHouse" .
     # LightHouse (SeedNode) : 시드는 도커활용
+
     docker run -e CLUSTER_IP=127.0.0.1 -e CLUSTER_PORT=4053 -e CLUSTER_SEEDS=akka.tcp://actor-cluster@127.0.0.1:4053 --publish 4053:4053 --name netcore_lighthouse lighthouse:latest
 
     docker build -f AkkaNetCore/Dockerfile --force-rm -t akkanetcore:latest --label "com.webnori.created-by=psmon" --label "com.microsoft.visual-studio.project-name=AkkaNetCore" .
