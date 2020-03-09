@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.TestKit;
 using Akka.TestKit.NUnit3;
-using AkkaNetCore.Actors;
 using AkkaNetCore.Actors.Study;
 using AkkaNetCore.Models.Message;
 using NUnit.Framework;

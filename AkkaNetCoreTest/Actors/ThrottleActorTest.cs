@@ -11,23 +11,26 @@ namespace AkkaNetCoreTest.Actors
     class ThrottleActorTest : TestKit
     {
         protected TestProbe probe;
+        protected int timeSec;
+        protected int elemntPerSec;
+        protected IActorRef throttleActor;
+        protected IActorRef throttleWork;
 
         [SetUp]
         public void Setup()
         {
             //스트림을 제공받는 최종 소비자 ( 물을 제공 받는 고객 )
             probe = this.CreateTestProbe();
+            // 초당 5개 처리한정 ( 더 처리하고 싶으면 이값을 늘린다.)
+            timeSec = 1;
+            elemntPerSec = 5;
+            throttleActor = Sys.ActorOf(Props.Create(() => new ThrottleActor(timeSec)));
+            throttleWork = Sys.ActorOf(Props.Create(() => new ThrottleWork(elemntPerSec, timeSec)));
         }
 
         [TestCase(15)]
         public void ThrottleActorAreOK(int cutoffSec)
         {
-            // 초당 5개 처리한정 ( 더 처리하고 싶으면 이값을 늘린다.)
-            int timeSec = 1;
-            int elemntPerSec = 5;            
-            var throttleActor = Sys.ActorOf(Props.Create(() => new ThrottleActor(timeSec)));
-            var throttleWork = Sys.ActorOf(Props.Create(() => new ThrottleWork(elemntPerSec, timeSec)));
-
             // 밸브에게 작업자 지정 ( 밸브는 초당 스트림을 모아서 방출한다 )
             // 작업자는 방류된 스트림을 기본적으로 쌓아두고, 초당 지정된 개수만 처리한다.
             throttleActor.Tell(new SetTarget(throttleWork));            
@@ -60,17 +63,5 @@ namespace AkkaNetCoreTest.Actors
 
             });
         }
-        /* 위 테스트의 결과로그,블락킹없이 실시간으로 초당 5개씩 처리함
-            [49:09] -  초당:5 테스트-1
-            [49:09] -  초당:5 테스트-2
-            [49:09] -  초당:5 테스트-3
-            [49:09] -  초당:5 테스트-4
-            [49:10] -  초당:5 테스트-5
-            [49:10] -  초당:5 테스트-6
-            [49:10] -  초당:5 테스트-7
-            [49:10] -  초당:5 테스트-8
-            [49:10] -  초당:5 테스트-9
-            [49:11] -  초당:5 테스트-10         
-        */
     }
 }

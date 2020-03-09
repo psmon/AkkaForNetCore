@@ -22,7 +22,10 @@ namespace AkkaNetCore.Config
 
         public static IActorRef ActorSelect(string name)
         {
-            return ActorList[name];
+            if(ActorList.ContainsKey(name))
+                return ActorList[name];
+
+            return null;
         }
 
         public static AkkaConfig Load(string environment, IConfiguration configuration)
