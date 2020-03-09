@@ -14,11 +14,8 @@ namespace AkkaNetCore.Actors.Study
         private readonly ILoggingAdapter logger = Context.GetLogger();
         private readonly string id;
         private int msgCnt;
-        private Random random;
-        private bool ClusterMode = false;
-        private bool MonitorMode = true;
-        
-        protected Cluster Cluster = Akka.Cluster.Cluster.Get(Context.System);
+        private Random random;        
+        private bool MonitorMode = true;                
         protected IActorRef MatrixSingleActor;
 
         public HighPassGateActor()
@@ -33,10 +30,6 @@ namespace AkkaNetCore.Actors.Study
             {
                 if (MonitorMode) Context.IncrementMessagesReceived();
                 
-                if (msgCnt == 0)
-                {
-                    logger.Debug("### FirstMessage HigPassGateActor");
-                }                
                 msgCnt++;
 
                 int auto_delay = msg.Delay == 0 ? random.Next(1, 100) : msg.Delay;                
@@ -53,11 +46,8 @@ namespace AkkaNetCore.Actors.Study
 
                 if (MonitorMode) Context.IncrementCounter("akka.custom.received1");
 
-                if ((msgCnt % 100) == 0)
-                {
-                    logger.Info($"Msg:{msg.Message} Count:{msgCnt} Delay:{auto_delay}");
-                }
-                    
+                logger.Info($"Msg:{msg.Message} Count:{msgCnt} Delay:{auto_delay}");
+
             });
         }
 
