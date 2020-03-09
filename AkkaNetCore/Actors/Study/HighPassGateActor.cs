@@ -53,22 +53,12 @@ namespace AkkaNetCore.Actors.Study
 
         protected override void PreStart()
         {
-            // subscribe to IMemberEvent and UnreachableMember events
-            if (ClusterMode)
-            {
-                Cluster.Subscribe(Self, ClusterEvent.InitialStateAsEvents,
-                new[] { typeof(ClusterEvent.IMemberEvent), typeof(ClusterEvent.UnreachableMember) });
-            }
-            
             if(MonitorMode) Context.IncrementActorCreated();
         }
 
         protected override void PostStop()
         {
-            if(ClusterMode) Cluster.Unsubscribe(Self);
-
             if(MonitorMode) Context.IncrementActorStopped();
-
         }
     }
 }
