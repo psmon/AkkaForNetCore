@@ -14,9 +14,9 @@ using Hocon;
 using Xunit;
 using Xunit.Abstractions;
 
-
-//https://github.com/akkadotnet/Akka.Streams.Kafka
-//https://github.com/akka/alpakka
+// Kafka를 Reactive Stream 버전으로 사용하기
+// https://github.com/akkadotnet/Akka.Streams.Kafka
+// https://github.com/akka/alpakka
 
 namespace AkkaNetCoreTest.Adapters
 {
@@ -70,11 +70,10 @@ namespace AkkaNetCoreTest.Adapters
         }
 
         [Theory]
-        [InlineData(20,10)]        
+        [InlineData(20,10)] //20 개의 메시지를 생산하고,소비한다,테스트는 10초이내에 완료되어야함(완료시 종료됨)
         public void ProduceAndConsumeAreOK(int testCnt, int cutoff)
         {            
-            int readyTimeForConsume = 3;            
-            Source<int,NotUsed> source = Source.From( Enumerable.Range(1, testCnt));
+            int readyTimeForConsume = 3;                        
 
             int recCnt = 0;
             KafkaConsumer.PlainSource(consumerSettings, subscription)
@@ -87,6 +86,8 @@ namespace AkkaNetCoreTest.Adapters
             }, materializer_consumer);
 
             Task.Delay(TimeSpan.FromSeconds(readyTimeForConsume)).Wait();
+
+            Source<int, NotUsed> source = Source.From(Enumerable.Range(1, testCnt));
 
             source                
                 .Select(c => c.ToString())

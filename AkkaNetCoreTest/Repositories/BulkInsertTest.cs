@@ -27,7 +27,7 @@ namespace AkkaNetCoreTest.Repositories
         }
 
         [Theory]
-        [InlineData(10000, 100, 10)]
+        [InlineData(50000, 100, 10)]    //5만개의 데이터 인입에 소요시간은 10초이내여야한다.
         public void BulkSppedTest(int daatSize,int batchSize, int cutoff)
         {
             var bulkItems_reseverd = new List<MessageReseved>();
