@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using AkkaNetCore.Config;
 using AkkaNetCore.Models.Entity;
 using AkkaNetCore.Repositories;
