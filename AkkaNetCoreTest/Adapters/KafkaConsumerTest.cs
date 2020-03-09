@@ -1,22 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
 using Akka.TestKit;
-using Akka.TestKit.NUnit3;
 using AkkaNetCore.Adapters;
 using AkkaNetCore.Models.Message;
-using NUnit.Framework;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Adapters
 {
-    class KafkaConsumerTest : TestKit
+    public class KafkaConsumerTest : TestKitXunit
     {
         KafkaProduce kafkaProduce;
         KafkaConsumer kafkaConsumer;
         TestProbe probe;
 
-        [SetUp]
+        public KafkaConsumerTest(ITestOutputHelper output) : base(output)
+        {
+            Setup();
+        }
+        
         public void Setup()
         {
             kafkaConsumer = new KafkaConsumer("kafka:9092", "test_consumer");
@@ -26,7 +27,7 @@ namespace AkkaNetCoreTest.Adapters
             kafkaProduce = new KafkaProduce("kafka:9092", "test_consumer");
         }
 
-        [Test]
+        [Fact]
         public void ProduceAndConsumerTest()
         {            
             kafkaProduce.Produce("SomeMessage");
@@ -39,7 +40,7 @@ namespace AkkaNetCoreTest.Adapters
 
                 KafkaMessage lastMessage = probe.LastMessage as KafkaMessage;
 
-                Assert.AreEqual("SomeMessage", lastMessage.Value as string);
+                Assert.Equal("SomeMessage", lastMessage.Value as string);
 
             });
         }

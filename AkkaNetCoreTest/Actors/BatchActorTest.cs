@@ -1,10 +1,10 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.TestKit;
-using Akka.TestKit.NUnit3;
 using AkkaNetCore.Actors.Utils;
 using AkkaNetCore.Models.Message;
-using NUnit.Framework;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Actors
 {
@@ -27,11 +27,15 @@ namespace AkkaNetCoreTest.Actors
         }
     }
 
-    class BatchActorTest : TestKit
+    public class BatchActorTest : TestKitXunit
     {
         protected TestProbe probe;
 
-        [SetUp]
+        public BatchActorTest(ITestOutputHelper output) : base(output)
+        {
+            Setup();
+        }
+        
         public void Setup()
         {
             //배치가 컬렉션단위로 잘 수행하는지 관찰자 셋팅
@@ -40,7 +44,8 @@ namespace AkkaNetCoreTest.Actors
 
         // 테스트목적 : 이벤트가 발생할때마다 DB저장이 아닌, 특정시간 수집된 구간의 데이터 벌크인서트처리목적(벌크인서트는 건바이건보다 빠르다)
         // 벌크를 만드는 주기를 3초(collectSec)로 지정..
-        [TestCase(3)]
+        [Theory]
+        [InlineData(3)]
         public void LazyBatchAreOK(int collectSec)
         {            
             var batchActor = Sys.ActorOf(Props.Create(() => new BatchActor(collectSec)));
@@ -61,8 +66,8 @@ namespace AkkaNetCoreTest.Actors
             var batchList = probe.ExpectMsg<Batch>(TimeSpan.FromSeconds(collectSec+1)).Obj;
             
             var firstItem = batchList[0] as string;
-            Assert.AreEqual("오브젝트1", firstItem);
-            Assert.AreEqual(3, batchList.Count);
+            Assert.Equal("오브젝트1", firstItem);
+            Assert.Equal(3, batchList.Count);
 
             //이벤트는 실시간적으로 발생한다.
             batchActor.Tell(new Queue("오브젝트4"));
@@ -76,12 +81,13 @@ namespace AkkaNetCoreTest.Actors
             //배치 항목을 검사
             batchList = probe.ExpectMsg<Batch>().Obj;
             firstItem = batchList[0] as string;
-            Assert.AreEqual("오브젝트4", firstItem);
-            Assert.AreEqual(4, batchList.Count);
+            Assert.Equal("오브젝트4", firstItem);
+            Assert.Equal(4, batchList.Count);
 
         }
 
-        [TestCase(3,2)]
+        [Theory]
+        [InlineData(3,2)]
         public void LazyBatchAreEmpty(int collectSec,int cutoffSec)
         {
             var batchActor = Sys.ActorOf(Props.Create(() => new BatchActor(collectSec)));

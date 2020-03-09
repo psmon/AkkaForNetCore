@@ -1,14 +1,14 @@
 ﻿using System;
 using Akka.Actor;
 using Akka.TestKit;
-using Akka.TestKit.NUnit3;
 using AkkaNetCore.Actors.Utils;
 using AkkaNetCore.Models.Message;
-using NUnit.Framework;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Actors
 {
-    class ThrottleActorTest : TestKit
+    public class ThrottleActorTest : TestKitXunit
     {
         protected TestProbe probe;
         protected int timeSec;
@@ -16,7 +16,11 @@ namespace AkkaNetCoreTest.Actors
         protected IActorRef throttleActor;
         protected IActorRef throttleWork;
 
-        [SetUp]
+        public ThrottleActorTest(ITestOutputHelper output) : base(output)
+        {
+            Setup();
+        }
+        
         public void Setup()
         {
             //스트림을 제공받는 최종 소비자 ( 물을 제공 받는 고객 )
@@ -28,7 +32,8 @@ namespace AkkaNetCoreTest.Actors
             throttleWork = Sys.ActorOf(Props.Create(() => new ThrottleWork(elemntPerSec, timeSec)));
         }
 
-        [TestCase(15)]
+        [Theory]
+        [InlineData(15)]
         public void ThrottleActorAreOK(int cutoffSec)
         {
             // 밸브에게 작업자 지정 ( 밸브는 초당 스트림을 모아서 방출한다 )
@@ -59,8 +64,8 @@ namespace AkkaNetCoreTest.Actors
                     lastMessage =probe.ExpectMsg<DelayMsg>();
                 }
                 //마지막 메시지의 Seq는 50이여야함
-                Assert.AreEqual("50", lastMessage.Seq);
-
+                Assert.Equal("50", lastMessage.Seq);
+                
             });
         }
     }
