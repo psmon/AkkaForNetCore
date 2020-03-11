@@ -7,18 +7,35 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Akka.Cluster" Version="1.3.17" />
-    <PackageReference Include="Akka.Streams" Version="1.3.17" />
-    <PackageReference Include="Akka.Streams.TestKit" Version="1.3.17" />
-    <PackageReference Include="Akka.TestKit" Version="1.3.17" />
-    <PackageReference Include="Akka.TestKit.NUnit3" Version="1.3.8" />
-    <PackageReference Include="Confluent.Kafka" Version="1.3.0" />
-    <PackageReference Include="nunit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.16.1">
+    <None Remove="akka.kafka.conf" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="akka.kafka.conf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Akka.Cluster" Version="1.4.1-rc1" />
+    <PackageReference Include="Akka.Cluster.Tools" Version="1.4.1-rc1" />
+    <PackageReference Include="Akka.DI.Extensions.DependencyInjection" Version="1.4.1-beta" />
+    <PackageReference Include="Akka.Streams" Version="1.4.1-rc1" />
+    <PackageReference Include="Akka.Streams.Kafka" Version="1.0.0-rc1" />
+    <PackageReference Include="Akka.Streams.TestKit" Version="1.4.1-rc1" />
+    <PackageReference Include="Akka.TestKit" Version="1.4.1-rc1" />    
+    <PackageReference Include="Akka.TestKit.Xunit2" Version="1.4.1-rc1" />
+    <PackageReference Include="Confluent.Kafka" Version="1.3.0" /> 
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
+    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="3.0.39" />
+    <PackageReference Include="xunit" Version="2.4.1" />    
+    <PackageReference Include="xunit.abstractions" Version="2.0.3" />    
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
   </ItemGroup>
 
   <ItemGroup>

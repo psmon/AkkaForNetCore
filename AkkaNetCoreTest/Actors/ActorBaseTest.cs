@@ -17,24 +17,29 @@ using System;
 using System.Threading.Tasks;
 using Akka.Actor;
 using Akka.TestKit;
-using Akka.TestKit.NUnit3;
 using AkkaNetCore.Actors.Study;
 using AkkaNetCore.Models.Message;
-using NUnit.Framework;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Actors
 {
-    class ActorBaseTest : TestKit
+    public class ActorBaseTest : TestKitXunit
     {
         TestProbe probe;
 
-        [SetUp]
+        public ActorBaseTest(ITestOutputHelper output) : base(output)
+        {
+            Setup();
+        }
+        
         public void Setup()
         {
             probe = this.CreateTestProbe();
         }
 
-        [TestCase(500)]
+        [Theory]
+        [InlineData(500)]
         public void Actor_should_get_within_max_allowable_time(int cutoff)
         {
             var basicActor = Sys.ActorOf(Props.Create(() => new BasicActor()));
@@ -45,7 +50,8 @@ namespace AkkaNetCoreTest.Actors
             });
         }
 
-        [TestCase(100, 500)]
+        [Theory]
+        [InlineData(100,500)]
         public void Actor_should_respond_within_max_allowable_time(int delay, int cutoff)
         {
             var cashGate = Sys.ActorOf(Props.Create(() => new CashGateActor()));
@@ -62,7 +68,8 @@ namespace AkkaNetCoreTest.Actors
             });
         }
 
-        [TestCase(300)]
+        [Theory]
+        [InlineData(300)]
         public async Task Actor_TransferTo_ActorRef(int cutoff)
         {
             // Printer -> Toner -> TestProbe
