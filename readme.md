@@ -2,6 +2,9 @@
 
 ## AKKA 소개
 
+![akkasystem](./Doc/akkasystem.png)
+
+
 Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단순화하는 라이브러리입니다.
 
 
