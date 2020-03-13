@@ -1,4 +1,4 @@
-# akka.net for .net core
+# AKKA for NetCore
 
 ## AKKA 소개
 
