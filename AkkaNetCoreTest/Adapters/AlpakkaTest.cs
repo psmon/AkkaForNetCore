@@ -90,7 +90,8 @@ namespace AkkaNetCoreTest.Adapters
             
             Source<int, NotUsed> source = Source.From(Enumerable.Range(1, limit));
             
-            source                
+            source
+                .Throttle(2, TimeSpan.FromSeconds(1), 1, ThrottleMode.Shaping)      //출력 조절 : 초당 2개처리
                 .Select(c => 
                 {
                     var result = $"No:{c.ToString()}";
@@ -99,7 +100,7 @@ namespace AkkaNetCoreTest.Adapters
                         result = lastSignal;
                     }                    
                     return result;
-                })
+                })                
                 .Select(elem => ProducerMessage.Single(new ProducerRecord<Null, string>(testTopic, elem)))
                 .Via(KafkaProducer.FlexiFlow<Null, string, NotUsed>(producerSettings))
                 .Select(result =>
