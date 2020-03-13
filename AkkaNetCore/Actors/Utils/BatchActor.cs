@@ -18,7 +18,7 @@ namespace AkkaNetCore.Actors.Utils
 
         private readonly int BatchSize = 1000;
 
-        private readonly bool IsWriteDB = false;
+        private readonly bool IsWriteDB = true;
 
         public BatchWriterActor()
         {            
