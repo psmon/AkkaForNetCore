@@ -61,36 +61,45 @@ namespace AkkaNetCoreTest.Adapters
             this.Sys.Settings.Config.WithFallback(config);
 
             producerSettings = ProducerSettings<Null, string>.Create(system_producer, null, null)
-                .WithBootstrapServers("kafka:9092");                
+                .WithBootstrapServers("kafka:9092");
 
             consumerSettings = ConsumerSettings<Null, string>.Create(system_consumer, null, null)
                 .WithBootstrapServers("kafka:9092")
-                .WithGroupId("group1");
+                .WithGroupId("group1");                
 
         }
 
         [Theory]
         [InlineData(20,10)] //20 개의 메시지를 생산하고,소비한다,테스트는 10초이내에 완료되어야함(완료시 종료됨)
-        public void ProduceAndConsumeAreOK(int testCnt, int cutoff)
-        {            
-            int readyTimeForConsume = 3;                        
-
+        public void ProduceAndConsumeAreOK(int limit, int cutoff)
+        {
+            string lastSignal = Guid.NewGuid().ToString();
+            int readyTimeForConsume = 3;
             int recCnt = 0;
-            KafkaConsumer.PlainSource(consumerSettings, subscription)
+
+            KafkaConsumer.CommittableSource(consumerSettings, subscription)
             .RunForeach(result =>
             {
-                Console.WriteLine($"Consumer: {result.Topic}/{result.Partition} {result.Offset}: {result.Value}");
-                recCnt++;
-                if (recCnt == testCnt)
-                    probe.Tell("카프카수신OK");
+                Console.WriteLine($"Consumer: {result.Record.Topic}/{result.Record.Partition} {result.Record.Offset}: {result.Record.Value}");                
+                if (lastSignal == result.Record.Value)
+                    probe.Tell("처리모두완료");
+
+                result.CommitableOffset.Commit();
+
             }, materializer_consumer);
-
-            Task.Delay(TimeSpan.FromSeconds(readyTimeForConsume)).Wait();
-
-            Source<int, NotUsed> source = Source.From(Enumerable.Range(1, testCnt));
-
+            
+            Source<int, NotUsed> source = Source.From(Enumerable.Range(1, limit));
+            
             source                
-                .Select(c => c.ToString())
+                .Select(c => 
+                {
+                    var result = $"No:{c.ToString()}";
+                    if(c == limit)
+                    {
+                        result = lastSignal;
+                    }                    
+                    return result;
+                })
                 .Select(elem => ProducerMessage.Single(new ProducerRecord<Null, string>(testTopic, elem)))
                 .Via(KafkaProducer.FlexiFlow<Null, string, NotUsed>(producerSettings))
                 .Select(result =>
@@ -100,10 +109,10 @@ namespace AkkaNetCoreTest.Adapters
                     return result;
                 })
                 .RunWith(Sink.Ignore<IResults<Null, string, NotUsed>>(), materializer_producer);
-            
+
             Within(TimeSpan.FromSeconds(cutoff), () =>
             {
-                probe.ExpectMsg("카프카수신OK",TimeSpan.FromSeconds(cutoff));
+                probe.ExpectMsg("처리모두완료", TimeSpan.FromSeconds(cutoff));
             });
         }
     }
