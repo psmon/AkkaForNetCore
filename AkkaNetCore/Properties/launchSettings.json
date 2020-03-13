@@ -22,7 +22,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger/",
       "environmentVariables": {
-        "MonitorToolCon": "127.0.0.1",
+        "MonitorToolCon": "127.0.0.1:8125",
         "akkaport": "7100",
         "akkaip": "127.0.0.1",
         "MonitorTool": "win",

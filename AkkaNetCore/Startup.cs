@@ -216,7 +216,13 @@ namespace AkkaNetCore
                 {
                     var MonitorTool = Environment.GetEnvironmentVariable("MonitorTool");
                     var MonitorToolCon = Environment.GetEnvironmentVariable("MonitorToolCon");
-
+                    var MonitorToolCons = MonitorToolCon.Split(":");                    
+                    string StatsdServerName = MonitorToolCons[0];
+                    int StatsdPort = 8125;
+                    if (MonitorToolCons.Length > 1 && 10 > MonitorToolCons.Length)
+                    {
+                        StatsdPort = int.Parse(MonitorToolCons[1]);
+                    }
                     switch (MonitorTool)
                     {
                         case "win":
@@ -250,7 +256,8 @@ namespace AkkaNetCore
                         case "datadog":
                             var statsdConfig = new StatsdConfig
                             {
-                                StatsdServerName = MonitorToolCon
+                                StatsdServerName = StatsdServerName,
+                                StatsdPort = StatsdPort                                
                             };
                             var dataDog = ActorMonitoringExtension.
                                 RegisterMonitor(actorSystem, new ActorDatadogMonitor(statsdConfig));
