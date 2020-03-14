@@ -48,7 +48,13 @@ namespace AkkaNetCoreTest.Actors
             {
                 probe.ExpectMsg<Issue>(issue =>
                 {
-                    Console.WriteLine($"IssueInfo : Message:{issue.Message} IsSecurityFlaw:{issue.IsSecurityFlaw} IsBug:{issue.IsBug} ");
+                    if (i < 2)
+                        Assert.Equal(true, issue.IsSecurityFlaw);
+                    else
+                        Assert.Equal(true, issue.IsBug);
+
+                    Console.WriteLine($"IssueInfo : Message:{issue.Message} " +
+                        $"IsSecurityFlaw:{issue.IsSecurityFlaw} IsBug:{issue.IsBug} ");
                 });
             }
             /* 기대결과

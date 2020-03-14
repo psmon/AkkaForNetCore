@@ -50,9 +50,7 @@ namespace AkkaNetCoreTest.Adapters
             probe = this.CreateTestProbe();
 
             var config = HoconConfigurationFactory.FromFile("akka.test.conf");
-            //akka.loglevel = DEBUG
-            //akka.suppress - json - serializer - warning = true
-
+            
             var system_producer = ActorSystem.Create("TestKafka", config);
             materializer_producer = system_producer.Materializer();
 

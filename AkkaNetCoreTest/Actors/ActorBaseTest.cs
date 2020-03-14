@@ -40,8 +40,8 @@ namespace AkkaNetCoreTest.Actors
         }
 
         [Theory]
-        [InlineData(500)]
-        public void 기본액터전송은_빨리이루어져야한다(int cutoff)
+        [InlineData(100)]
+        public void 기본액터전송은_100ms이내에_이루어져야한다(int cutoff)
         {
             var basicActor = Sys.ActorOf(Props.Create(() => new BasicActor()));
             Within(TimeSpan.FromMilliseconds(cutoff), () =>
