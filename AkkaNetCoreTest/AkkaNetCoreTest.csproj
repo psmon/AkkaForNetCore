@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="akka.kafka.conf" />
+    <None Remove="akka.test.conf" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="akka.kafka.conf">
+    <Content Include="akka.test.conf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

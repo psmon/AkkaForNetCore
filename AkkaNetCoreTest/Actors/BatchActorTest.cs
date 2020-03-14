@@ -8,25 +8,7 @@ using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Actors
 {
-    // 특정기간동안 집계된 벌크 컬렉션은 이 액터에게 온다.
-    public class TestBatchWriterActor : ReceiveActor
-    {
-        protected IActorRef probe;
-
-        public TestBatchWriterActor(IActorRef _probe)
-        {
-            probe = _probe;
-            ReceiveAsync<object>(async message =>
-            {
-                if (message is Batch batchMessage)
-                {
-                    probe.Tell(batchMessage);
-                    Console.WriteLine($"====== TODO 배치수행 :{batchMessage.Obj.Count}");                    
-                }
-            });
-        }
-    }
-
+    // 테스트 목적 : 배치처리를 우아하게 해봅시다.
     public class BatchActorTest : TestKitXunit
     {
         protected TestProbe probe;
@@ -46,7 +28,7 @@ namespace AkkaNetCoreTest.Actors
         // 벌크를 만드는 주기를 3초(collectSec)로 지정..
         [Theory]
         [InlineData(3)]
-        public void LazyBatchAreOK(int collectSec)
+        public void 배치처리는_특정시간구간_일괄처리한다(int collectSec)
         {            
             var batchActor = Sys.ActorOf(Props.Create(() => new BatchActor(collectSec)));
 
@@ -88,7 +70,7 @@ namespace AkkaNetCoreTest.Actors
 
         [Theory]
         [InlineData(3,2)]
-        public void LazyBatchAreEmpty(int collectSec,int cutoffSec)
+        public void 특정시간이내에는_배치가작동하지않는다(int collectSec,int cutoffSec)
         {
             var batchActor = Sys.ActorOf(Props.Create(() => new BatchActor(collectSec)));
             //배치저리 담당자 지정 : 배치처리를 검사하는 관찰자를 등록함
@@ -104,4 +86,24 @@ namespace AkkaNetCoreTest.Actors
             probe.ExpectNoMsg(TimeSpan.FromSeconds(cutoffSec));
         }
     }
+
+    // 특정기간동안 집계된 벌크 컬렉션은 이 액터에게 온다.
+    public class TestBatchWriterActor : ReceiveActor
+    {
+        protected IActorRef probe;
+
+        public TestBatchWriterActor(IActorRef _probe)
+        {
+            probe = _probe;
+            ReceiveAsync<object>(async message =>
+            {
+                if (message is Batch batchMessage)
+                {
+                    probe.Tell(batchMessage);
+                    Console.WriteLine($"====== TODO 배치수행 :{batchMessage.Obj.Count}");
+                }
+            });
+        }
+    }
+
 }

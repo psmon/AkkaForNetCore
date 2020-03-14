@@ -1,9 +1,0 @@
-# prometheus.yml
-global:
-    scrape_interval: 5s
-    external_labels:
-        monitor: 'my-monitor'
-scrape_configs:
-    - job_name: 'prometheus'
-      target_groups:
-          - targets: ['192.168.0.51:10250']

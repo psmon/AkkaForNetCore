@@ -9,6 +9,7 @@ using Z.EntityFramework.Extensions;
 
 namespace AkkaNetCoreTest.Repositories
 {
+    // 테스트 목적 : 대용량 이벤트처리를 저장하기위해서 벌크인서트가 사용됩니다.
     public class BulkInsertTest : TestKitXunit
     {
         private AppSettings appSettings;
@@ -28,7 +29,7 @@ namespace AkkaNetCoreTest.Repositories
 
         [Theory]
         [InlineData(50000, 100, 10)]    //5만개의 데이터 인입에 소요시간은 10초이내여야한다.
-        public void BulkSppedTest(int daatSize,int batchSize, int cutoff)
+        public void 벌크인서트의_속도는_빨라야한다(int daatSize,int batchSize, int cutoff)
         {
             var bulkItems_reseverd = new List<MessageReseved>();
             for(int i = 0; i < daatSize; i++)

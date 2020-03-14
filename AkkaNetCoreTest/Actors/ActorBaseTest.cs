@@ -24,6 +24,7 @@ using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Actors
 {
+    // 테스트 목적 : 액터의 기본 사용법을 알수 있습니다.
     public class ActorBaseTest : TestKitXunit
     {
         TestProbe probe;
@@ -40,7 +41,7 @@ namespace AkkaNetCoreTest.Actors
 
         [Theory]
         [InlineData(500)]
-        public void Actor_should_get_within_max_allowable_time(int cutoff)
+        public void 기본액터전송은_빨리이루어져야한다(int cutoff)
         {
             var basicActor = Sys.ActorOf(Props.Create(() => new BasicActor()));
             Within(TimeSpan.FromMilliseconds(cutoff), () =>
@@ -52,7 +53,7 @@ namespace AkkaNetCoreTest.Actors
 
         [Theory]
         [InlineData(100,500)]
-        public void Actor_should_respond_within_max_allowable_time(int delay, int cutoff)
+        public void 정산요청을하면_정산이완료되어야한다(int delay, int cutoff)
         {
             var cashGate = Sys.ActorOf(Props.Create(() => new CashGateActor()));
             // sets a maximum allowable time for entire block to finish
@@ -70,7 +71,7 @@ namespace AkkaNetCoreTest.Actors
 
         [Theory]
         [InlineData(300)]
-        public async Task Actor_TransferTo_ActorRef(int cutoff)
+        public async Task 프린트를하면_토너가감소해야한다(int cutoff)
         {
             // Printer -> Toner -> TestProbe
             var toner = Sys.ActorOf(Props.Create(() => new TonerActor()),"toner");            

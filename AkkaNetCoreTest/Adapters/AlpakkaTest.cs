@@ -49,7 +49,7 @@ namespace AkkaNetCoreTest.Adapters
 
             probe = this.CreateTestProbe();
 
-            var config = HoconConfigurationFactory.FromFile("akka.kafka.conf");
+            var config = HoconConfigurationFactory.FromFile("akka.test.conf");
             //akka.loglevel = DEBUG
             //akka.suppress - json - serializer - warning = true
 
@@ -72,7 +72,7 @@ namespace AkkaNetCoreTest.Adapters
 
         [Theory]
         [InlineData(20,10)] //20 개의 메시지를 생산하고,소비한다,테스트는 10초이내에 완료되어야함(완료시 종료됨)
-        public void ProduceAndConsumeAreOK(int limit, int cutoff)
+        public void 카프카_생산과소비는_일치해야한다(int limit, int cutoff)
         {
             string lastSignal = Guid.NewGuid().ToString();
             int readyTimeForConsume = 3;

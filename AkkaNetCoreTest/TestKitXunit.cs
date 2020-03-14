@@ -13,7 +13,20 @@ namespace AkkaNetCoreTest
         private readonly TextWriter _originalOut;
         private readonly TextWriter _textWriter;
 
-        public TestKitXunit(ITestOutputHelper output)
+        static public string akkaConfig = @"
+akka.loglevel = ERROR
+
+my-custom-mailbox {
+    mailbox-type : ""AkkaNetCore.Models.Message.IssueTrackerMailbox, AkkaNetCore""
+}
+
+actor.deployment {
+    /mymailbox {
+        mailbox = my-custom-mailbox
+    }
+}
+";
+        public TestKitXunit(ITestOutputHelper output) : base(akkaConfig)
         {
             _output = output;
             _originalOut = Console.Out;

@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Adapters
 {
+    // 테스트 목적 : Kafka 모듈을 액터모듈과 연동하여 메시지를 더 우아하게 소비할수 있습니다.
     public class KafkaConsumerTest : TestKitXunit
     {
         KafkaProduce kafkaProduce;
@@ -35,7 +36,7 @@ namespace AkkaNetCoreTest.Adapters
 
         [Theory]
         [InlineData(10,10)]
-        public void ProduceAndConsumerTest(int cutoff,int repeat)
+        public void 카프카_생산과소비는_일치해야한다(int cutoff,int repeat)
         {
             for(int i=1;i<repeat+1; i++)
                 kafkaProduce.Produce("SomeMessage:"+i);
