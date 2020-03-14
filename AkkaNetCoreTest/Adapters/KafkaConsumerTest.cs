@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Akka.TestKit;
 using AkkaNetCore.Adapters;
 using AkkaNetCore.Models.Message;
@@ -21,26 +22,32 @@ namespace AkkaNetCoreTest.Adapters
         public void Setup()
         {
             kafkaConsumer = new KafkaConsumer("kafka:9092", "test_consumer");
+            
             probe = this.CreateTestProbe();
+            
             kafkaConsumer.CreateConsumer(probe).Start();
 
             kafkaProduce = new KafkaProduce("kafka:9092", "test_consumer");
+
+            // Wait for SystemLoad
+            Task.Delay(3000).Wait();
         }
 
-        [Fact]
-        public void ProduceAndConsumerTest()
-        {            
-            kafkaProduce.Produce("SomeMessage");
+        [Theory]
+        [InlineData(10,10)]
+        public void ProduceAndConsumerTest(int cutoff,int repeat)
+        {
+            for(int i=1;i<repeat+1; i++)
+                kafkaProduce.Produce("SomeMessage:"+i);
 
-            Within(TimeSpan.FromSeconds(10), () => {
+            Within(TimeSpan.FromSeconds(cutoff), () => {
 
-                AwaitCondition(() => probe.HasMessages);
-
-                probe.ExpectMsg<KafkaMessage>(TimeSpan.FromSeconds(0));
+                for (int i = 0; i < repeat; i++)
+                    probe.ExpectMsg<KafkaMessage>(TimeSpan.FromSeconds(3));
 
                 KafkaMessage lastMessage = probe.LastMessage as KafkaMessage;
 
-                Assert.Equal("SomeMessage", lastMessage.Value as string);
+                Assert.Equal($"SomeMessage:{repeat}", lastMessage.Value as string);
 
             });
         }

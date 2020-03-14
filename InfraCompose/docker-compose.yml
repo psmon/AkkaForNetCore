@@ -4,7 +4,6 @@ services:
   akkadb:
     image: mysql:5.7
     command: --default-authentication-plugin=mysql_native_password
-    restart: always
     ports:
       - 33061:3306
     volumes:

@@ -20,6 +20,7 @@ using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Adapters
 {
+    // 테스트 목적 : Kafka와 같은 메시지 큐시스템은,Akka의 Stream과 연결하여 Reactive Stream을 준수할수 있습니다.
     public class AlpakkaTest : TestKitXunit
     {
         protected TestProbe probe;

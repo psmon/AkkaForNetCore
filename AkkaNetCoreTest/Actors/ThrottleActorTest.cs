@@ -8,6 +8,7 @@ using Xunit.Abstractions;
 
 namespace AkkaNetCoreTest.Actors
 {
+    // 테스트 목적 : 하류시스템이 상류시템의 성능을 따라가지 못할때 TPS조절이 필요 하며, Throttle(ThrottleWork포함) 장치를 이용할수 있습니다.
     public class ThrottleActorTest : TestKitXunit
     {
         protected TestProbe probe;
@@ -31,7 +32,7 @@ namespace AkkaNetCoreTest.Actors
             throttleActor = Sys.ActorOf(Props.Create(() => new ThrottleActor(timeSec)));
             throttleWork = Sys.ActorOf(Props.Create(() => new ThrottleWork(elemntPerSec, timeSec)));
         }
-
+                 
         [Theory]
         [InlineData(15)]
         public void ThrottleActorAreOK(int cutoffSec)

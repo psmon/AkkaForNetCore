@@ -44,7 +44,8 @@ namespace AkkaNetCore.Adapters
                 // topic/partitions of interest. By default, offsets are committed
                 // automatically, so in this example, consumption will only start from the
                 // earliest message in the topic 'my-topic' the first time you run the program.
-                AutoOffsetReset = AutoOffsetReset.Earliest
+                AutoOffsetReset = AutoOffsetReset.Earliest,
+                EnableAutoCommit = true
             };
 
             Console.WriteLine("kafka StartConsumer ");
@@ -70,8 +71,12 @@ namespace AkkaNetCore.Adapters
                                 }
                                 else
                                 {
-                                    var cr = consumer.Consume(ct);
+                                    var cr = consumer.Consume(ct);                                    
+
                                     if (consumeAoctor != null) consumeAoctor.Tell(new KafkaMessage(cr.Topic, cr.Value));
+
+                                    consumer.Commit(cr);
+
                                     HasMessage = true;
                                     Console.WriteLine($"Consumed message '{cr.Value}' at: '{cr.TopicPartitionOffset}'.");
                                 }
