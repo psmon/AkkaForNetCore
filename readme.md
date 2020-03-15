@@ -86,6 +86,7 @@ more info :
 
 - Akka : JVM AKKA가 .net으로 포팅되었으며,로컬 액터만 활용시 이것만으로 충분합니다.
 - Akka.Logger.NLog : Nlog호환 Akka 로깅
+- Akka.Persistence : 액터의 실시간 메시지를 다양한 방법으로 영속화(Database)하며,DiveliveryOnce와 같은 툴을 제공합니다
 - Akka.Cluster : Akka를 포함한 클러스터링 모듈
 - Akka.Streams.Kafka : 고성능 메시지 큐와 연동은 ReactiveStream을 서로 준수하는것이 진보된 방식입니다.
 - Akka.Monitoring : 모니터링 모듈 - 대용량 메시징의 모니터링 연동은 선택이 아닌 필수입니다. 다양한 모니터링과 연동됩수 있습니다.
