@@ -20,10 +20,10 @@ namespace AkkaNetCoreTest.Actors
 
         public void Setup()
         {
-            //여기서 관찰자는 Qa 알림 역활을 받습니다.
+            //여기서 관찰자는 고객이 받은 택배를 카운팅합니다.
             probe = this.CreateTestProbe();
 
-            deliveryManActor = Sys.ActorOf(Props.Create(() => new DeliveryManActor(probe)));
+            deliveryManActor = Sys.ActorOf(Props.Create(() => new DeliveryManActor(probe)),"deliveryman");
 
         }
 

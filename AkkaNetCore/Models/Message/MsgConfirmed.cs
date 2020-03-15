@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AkkaNetCore.Models.Message
+﻿namespace AkkaNetCore.Models.Message
 {
     // AtLeastOnceDelivery를 위한 메시지 설계
     public class Msg

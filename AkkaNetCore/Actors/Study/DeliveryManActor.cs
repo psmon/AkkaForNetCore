@@ -47,7 +47,7 @@ namespace AkkaNetCore.Actors.Study
         {
             _probe = probe;
 
-            _destionationActor = Context.ActorOf(Props.Create(() => new CustomActor()));
+            _destionationActor = Context.ActorOf(Props.Create(() => new CustomActor()),"customer");
 
             Recover<MsgSent>(msgSent => Handler(msgSent));
 
