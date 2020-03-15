@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+  datadog:
+    image: datadog/agent:7
+    ports:
+      - 8125:8125/udp
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+    environment:
+      DD_API_KEY: your_apikey
+      DD_DOGSTATSD_NON_LOCAL_TRAFFIC: "true"

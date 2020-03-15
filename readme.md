@@ -6,6 +6,7 @@
 
 
 Akka는 오픈 소스 툴킷으로,동시성과 분산 애플리케이션을 단순화하는 라이브러리입니다.
+웹노리는,다양한 문제 해결을 위해 실천형 아키텍쳐를 지향합니다.
 
 
 소개 : http://wiki.webnori.com/display/webfr/.NET+Core+With+Akka
@@ -75,7 +76,10 @@ Docker-Compose로 멀티 인스턴스 구성이 되어 있습니다. - VisualStu
 
 Docker-Compose로 클러스터 구성을 참고하여,  클라우드또는 쿠버네틱스로의 전환이 용이합니다.
 
-more info : https://docs.microsoft.com/ko-kr/dotnet/architecture/microservices/multi-container-microservice-net-applications/multi-container-applications-docker-compose
+more info : 
+
+ - https://docs.microsoft.com/ko-kr/dotnet/architecture/microservices/multi-container-microservice-net-applications/multi-container-applications-docker-compose
+ - https://docs.microsoft.com/ko-kr/visualstudio/containers/docker-compose-properties?view=vs-2019
 
 
 ## 주요모듈

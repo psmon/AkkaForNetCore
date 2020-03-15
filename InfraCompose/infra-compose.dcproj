@@ -9,6 +9,7 @@
     <DockerServiceName>infra-akkanetcore</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="docker-compose-datadog.override.yml" />
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
     <None Include="firstsql.mysql" />
