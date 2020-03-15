@@ -2,11 +2,10 @@
 using System.Collections.Concurrent;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Akka.Actor;
-using Hocon;
+using Akka.Configuration;
 using Microsoft.Extensions.Configuration;
-using AkkaConfig = Hocon.Config;
+using AkkaConfig = Akka.Configuration.Config;
 
 namespace AkkaNetCore.Config
 {
@@ -94,13 +93,16 @@ namespace AkkaNetCore.Config
 
                 AkkaConfig injectedClusterConfigString = customConfig;
 
-                var akkaConfig = HoconConfigurationFactory.FromFile(configFilePath);
+                string configText = File.ReadAllText(configFilePath);
+
+                var akkaConfig = ConfigurationFactory.ParseString(configText);
+
                 var finalConfig = injectedClusterConfigString.WithFallback(akkaConfig);
 
                 Console.WriteLine($"=== AkkaConfig:{configFilePath}\r\n{finalConfig}\r\n===");
                 return finalConfig;
             }
-            return HoconConfigurationFactory.Empty;
+            return ConfigurationFactory.Empty;
         }
     }
 }

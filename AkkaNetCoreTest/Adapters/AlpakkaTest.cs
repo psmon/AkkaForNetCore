@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Akka;
 using Akka.Actor;
+using Akka.Configuration;
 using Akka.Streams;
 using Akka.Streams.Dsl;
 using Akka.Streams.Kafka.Dsl;
@@ -10,9 +12,9 @@ using Akka.Streams.Kafka.Messages;
 using Akka.Streams.Kafka.Settings;
 using Akka.TestKit;
 using Confluent.Kafka;
-using Hocon;
 using Xunit;
 using Xunit.Abstractions;
+using AkkaConfig = Akka.Configuration.Config;
 
 // Kafka를 Reactive Stream 버전으로 사용하기
 // https://github.com/akkadotnet/Akka.Streams.Kafka
@@ -49,8 +51,10 @@ namespace AkkaNetCoreTest.Adapters
 
             probe = this.CreateTestProbe();
 
-            var config = HoconConfigurationFactory.FromFile("akka.test.conf");
-            
+            string configText = File.ReadAllText("akka.test.conf");
+
+            var config = ConfigurationFactory.ParseString(configText);
+
             var system_producer = ActorSystem.Create("TestKafka", config);
             materializer_producer = system_producer.Materializer();
 

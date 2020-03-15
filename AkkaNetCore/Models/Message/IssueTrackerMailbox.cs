@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Akka.Actor;
+﻿using Akka.Actor;
 using Akka.Dispatch;
+using AkkaConfig = Akka.Configuration.Config;
 
 namespace AkkaNetCore.Models.Message
 {
@@ -23,7 +20,7 @@ namespace AkkaNetCore.Models.Message
 
     public class IssueTrackerMailbox : UnboundedPriorityMailbox
     {
-        public IssueTrackerMailbox(Settings setting, Hocon.Config config) : base(setting, config)
+        public IssueTrackerMailbox(Settings setting, AkkaConfig config) : base(setting, config)
         {
         }
 
