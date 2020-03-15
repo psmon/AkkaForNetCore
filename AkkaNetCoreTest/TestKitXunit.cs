@@ -14,7 +14,7 @@ namespace AkkaNetCoreTest
         private readonly TextWriter _textWriter;
 
         static public string akkaConfig = @"
-akka.loglevel = ERROR
+akka.loglevel = DEBUG
 
 my-custom-mailbox {
     mailbox-type : ""AkkaNetCore.Models.Message.IssueTrackerMailbox, AkkaNetCore""
