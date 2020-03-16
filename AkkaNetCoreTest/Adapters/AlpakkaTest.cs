@@ -72,9 +72,9 @@ namespace AkkaNetCoreTest.Adapters
 
         }
 
-        [Theory]
+        [Theory(DisplayName = "카프카_생산과소비는_일치해야한다 초당5개씩만 처리해야한다")]
         [InlineData(20,10)] //20 개의 메시지를 생산하고,소비한다,테스트는 10초이내에 완료되어야함(완료시 종료됨)
-        public void 카프카_생산과소비는_일치해야한다(int limit, int cutoff)
+        public void Test1(int limit, int cutoff)
         {
             string lastSignal = Guid.NewGuid().ToString();
             int readyTimeForConsume = 3;

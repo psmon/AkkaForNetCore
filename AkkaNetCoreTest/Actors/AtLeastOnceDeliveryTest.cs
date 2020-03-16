@@ -27,9 +27,9 @@ namespace AkkaNetCoreTest.Actors
 
         }
 
-        [Theory]
+        [Theory(DisplayName = "일반택배는 일정한확률로 분실되며 분실시 재전송된다")]
         [InlineData(3,13000)]
-        public void 일반택배는_일정한확률로_분실되며_분실시_재전송된다(int repeat, int cutoff)
+        public void Test1(int repeat, int cutoff)
         {
             for (int i = 0; i < repeat; i++)
             {
@@ -45,9 +45,9 @@ namespace AkkaNetCoreTest.Actors
             });
         }
 
-        [Theory]
+        [Theory(DisplayName = "고급택배는_항상성공하여_빠르게모두처리된다")]
         [InlineData(100,300)]
-        public void 고급택배는_항상성공하여_빠르게모두처리된다(int repeat,int cutoff)
+        public void Test2(int repeat,int cutoff)
         {
             for (int i = 0; i < repeat; i++)
             {

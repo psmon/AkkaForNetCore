@@ -29,9 +29,9 @@ namespace AkkaNetCoreTest.Actors
             throttleActor = Sys.ActorOf(Props.Create(() => new ThrottleActor(timeSec)));            
         }
                  
-        [Theory]
+        [Theory(DisplayName = "밸브작업자는 초당5개씩만 처리해야한다")]
         [InlineData(15,5)]        
-        public void 밸브작업자는_초당5개씩만_처리해야한다(int cutoffSec,int elemntPerSec)
+        public void Test1(int cutoffSec,int elemntPerSec)
         {
             var throttleWork = Sys.ActorOf(Props.Create(() => new ThrottleWork(elemntPerSec, timeSec)));
 

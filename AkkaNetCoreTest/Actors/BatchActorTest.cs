@@ -26,9 +26,9 @@ namespace AkkaNetCoreTest.Actors
 
         // 테스트목적 : 이벤트가 발생할때마다 DB저장이 아닌, 특정시간 수집된 구간의 데이터 벌크인서트처리목적(벌크인서트는 건바이건보다 빠르다)
         // 벌크를 만드는 주기를 3초(collectSec)로 지정..
-        [Theory]
+        [Theory(DisplayName = "배치처리는_특정시간구간_일괄처리한다")]
         [InlineData(3)]
-        public void 배치처리는_특정시간구간_일괄처리한다(int collectSec)
+        public void Test1(int collectSec)
         {            
             var batchActor = Sys.ActorOf(Props.Create(() => new BatchActor(collectSec)));
 
@@ -68,9 +68,9 @@ namespace AkkaNetCoreTest.Actors
 
         }
 
-        [Theory]
+        [Theory(DisplayName = "특정시간이내에는_배치가작동하지않는다")]
         [InlineData(3,2)]
-        public void 특정시간이내에는_배치가작동하지않는다(int collectSec,int cutoffSec)
+        public void Test2(int collectSec,int cutoffSec)
         {
             var batchActor = Sys.ActorOf(Props.Create(() => new BatchActor(collectSec)));
             //배치저리 담당자 지정 : 배치처리를 검사하는 관찰자를 등록함

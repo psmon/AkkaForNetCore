@@ -34,9 +34,9 @@ namespace AkkaNetCoreTest.Adapters
             Task.Delay(3000).Wait();
         }
 
-        [Theory]
+        [Theory(DisplayName = "카프카_생산과소비는_일치해야한다 초당5개씩만 처리해야한다")]
         [InlineData(10,10)]
-        public void 카프카_생산과소비는_일치해야한다(int cutoff,int repeat)
+        public void Test1(int cutoff,int repeat)
         {
             for(int i=1;i<repeat+1; i++)
                 kafkaProduce.Produce("SomeMessage:"+i);

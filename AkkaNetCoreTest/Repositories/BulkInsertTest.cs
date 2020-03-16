@@ -27,9 +27,9 @@ namespace AkkaNetCoreTest.Repositories
             };
         }
 
-        [Theory]
+        [Theory(DisplayName = "오만개의데이터는_10초이내에_DB에_인입되어야한다")]
         [InlineData(50000, 100, 10)]    //5만개의 데이터 인입에 소요시간은 10초이내여야한다.
-        public void 오만개의데이터는_10초이내에_DB에_인입되어야한다(int daatSize,int batchSize, int cutoff)
+        public void Test1(int daatSize,int batchSize, int cutoff)
         {
             var bulkItems_reseverd = new List<MessageReseved>();
             for(int i = 0; i < daatSize; i++)

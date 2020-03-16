@@ -29,8 +29,8 @@ namespace AkkaNetCoreTest.Actors
 
         }
 
-        [Fact]
-        public void 보안결함_메시지가_먼저처리_되어야한다()
+        [Fact(DisplayName = "보안결함_메시지가_먼저처리_되어야한다")]
+        public void Test1()
         {
             // isBug가 false인 보안결함 메시지가 먼저 처리되어야합니다.
             Issue msg1 = new Issue("test1", true);

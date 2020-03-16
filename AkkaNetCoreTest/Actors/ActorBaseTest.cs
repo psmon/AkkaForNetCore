@@ -39,9 +39,9 @@ namespace AkkaNetCoreTest.Actors
             probe = this.CreateTestProbe();
         }
 
-        [Theory]
+        [Theory(DisplayName = "기본 액터전송은 100ms 이내에 이루어져야한다")]
         [InlineData(100)]
-        public void 기본액터전송은_100ms이내에_이루어져야한다(int cutoff)
+        public void Test1(int cutoff)
         {
             var basicActor = Sys.ActorOf(Props.Create(() => new BasicActor()));
             Within(TimeSpan.FromMilliseconds(cutoff), () =>
@@ -51,9 +51,9 @@ namespace AkkaNetCoreTest.Actors
             });
         }
 
-        [Theory]
+        [Theory(DisplayName = "정산요청을하면_정산이완료되어야한다")]
         [InlineData(100,500)]
-        public void 정산요청을하면_정산이완료되어야한다(int delay, int cutoff)
+        public void Test2(int delay, int cutoff)
         {
             var cashGate = Sys.ActorOf(Props.Create(() => new CashGateActor()));
             // sets a maximum allowable time for entire block to finish
@@ -69,9 +69,9 @@ namespace AkkaNetCoreTest.Actors
             });
         }
 
-        [Theory]
+        [Theory(DisplayName = "프린트를하면_토너가감소해야한다")]
         [InlineData(300)]
-        public async Task 프린트를하면_토너가감소해야한다(int cutoff)
+        public async Task Test3(int cutoff)
         {
             // Printer -> Toner -> TestProbe
             var toner = Sys.ActorOf(Props.Create(() => new TonerActor()),"toner");            
