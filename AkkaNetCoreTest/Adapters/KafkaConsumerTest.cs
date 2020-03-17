@@ -9,6 +9,7 @@ using Xunit.Abstractions;
 namespace AkkaNetCoreTest.Adapters
 {
     // 테스트 목적 : Kafka 모듈을 액터모듈과 연동하여 메시지를 더 우아하게 소비할수 있습니다.
+    // 주의 : 카프카연동은 AlpakkaTest에서 사용된 진보된 방식을 추천합니다.
     public class KafkaConsumerTest : TestKitXunit
     {
         KafkaProduce kafkaProduce;
