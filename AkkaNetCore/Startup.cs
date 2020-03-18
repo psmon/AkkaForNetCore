@@ -12,6 +12,7 @@ using Akka.Monitoring.PerformanceCounters;
 using Akka.Monitoring.Prometheus;
 using Akka.Routing;
 using AkkaNetCore.Actors;
+using AkkaNetCore.Actors.LoadTest;
 using AkkaNetCore.Actors.Study;
 using AkkaNetCore.Actors.Utils;
 using AkkaNetCore.Config;
@@ -153,6 +154,30 @@ namespace AkkaNetCore
                 actorSystem.BootstrapSingleton<SingleToneActor>("SingleToneActor", "akkanet");
                 var singleToneActor = actorSystem.BootstrapSingletonProxy("SingleToneActor", "akkanet", "/user/SingleToneActor", "singleToneActorProxy");
                 AkkaLoad.RegisterActor("SingleToneActor", singleToneActor);
+
+
+                // ###########  로드 테스트 전용
+
+                // 클러스터내 싱글톤은 하나만 존재할수있음 : akka.cluster.singleton  - akka.conf참고 
+
+                //액터 선택 : AkkaLoad.ActorSelect("ClusterWorkerPoolActor")
+                var worker = AkkaLoad.RegisterActor(
+                    "ClusterWorkerPoolActor",
+                    actorSystem.ActorOf(Props.Create<ClusterWorkerPoolActor>()
+                            .WithDispatcher("fast-dispatcher")
+                            .WithRouter(FromConfig.Instance),
+                            "cluster-workerpool"
+                ));
+
+                //커멘드 액터( 로드테스트용)
+                //액터생성
+                AkkaLoad.RegisterActor(
+                    "TPSCommandActor",
+                    actorSystem.ActorOf(Props.Create<TPSCommandActor>(worker),
+                    "TPSCommandActor"
+                ));
+                
+                // ###########  로드 테스트 전용
 
 
                 //액터생성
