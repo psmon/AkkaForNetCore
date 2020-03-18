@@ -50,7 +50,7 @@ namespace AkkaNetCore.Actors.LoadTest
 
         public ClusterWorkerPoolActor()
         {
-            int workCount = 10; //컴퓨터의 성능에따라 최대 능력치 조절가능합니다.
+            int workCount = 300; //컴퓨터의 성능에따라 최대 능력치 조절가능합니다.
             logger.Debug($"========== Create ApiWorkActor {workCount}");
 
             workActor = Context.ActorOf(Props.Create<ApiWorkActor>()
