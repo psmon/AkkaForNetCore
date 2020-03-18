@@ -3,9 +3,7 @@ using Akka.Cluster;
 using Akka.Event;
 using Akka.Monitoring;
 using Akka.Routing;
-using Akka.Streams;
 using AkkaNetCore.Models.LoadTest;
-using AkkaNetCore.Models.Message;
 
 namespace AkkaNetCore.Actors.LoadTest
 {
@@ -25,7 +23,7 @@ namespace AkkaNetCore.Actors.LoadTest
 
                 logger.Debug($"API호출시도 {msg}");
 
-                //성공시에만 카운트
+                //성공시에만 카운트( 실패= received1 - received2)
                 Context.IncrementCounter("akka.custom.received2");
             });
         }
@@ -52,7 +50,7 @@ namespace AkkaNetCore.Actors.LoadTest
 
         public ClusterWorkerPoolActor()
         {
-            int workCount = 10;
+            int workCount = 10; //컴퓨터의 성능에따라 최대 능력치 조절가능합니다.
             logger.Debug($"========== Create ApiWorkActor {workCount}");
 
             workActor = Context.ActorOf(Props.Create<ApiWorkActor>()

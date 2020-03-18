@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Immutable;
 using Akka;
 using Akka.Actor;
 using Akka.Event;
@@ -24,12 +23,13 @@ namespace AkkaNetCore.Actors.LoadTest
         public ThrottleLimitWork()
         {
 
-            //초당 최대 처리수를 설정합니다.
+            //초당 최대 처리수를 실시간 조정가능합니다.
             ReceiveAsync<int>(async limit =>
             {
                 elementPerSec = limit;
             });
 
+            //조절처리 이후 방류된 메시지를 소비할 액터를 설정합니다.
             ReceiveAsync<SetTarget>(async target =>
             {
                 consumer = target.Ref;
