@@ -1,4 +1,6 @@
-﻿using Akka.Actor;
+﻿using System;
+using System.Threading.Tasks;
+using Akka.Actor;
 using Akka.Cluster;
 using Akka.Event;
 using Akka.Monitoring;
@@ -13,15 +15,21 @@ namespace AkkaNetCore.Actors.LoadTest
         private readonly ILoggingAdapter logger = Context.GetLogger();        
         protected IActorRef StatisticsActor;
 
+        Random rnd;
+
         public ApiWorkActor()
         {
+            rnd = new Random();
+
             ReceiveAsync<ApiCallSpec>(async msg =>
             {
                 Context.IncrementMessagesReceived();
                 //시도 카운트
                 Context.IncrementCounter("akka.custom.received1");
 
-                logger.Debug($"API호출시도 {msg}");
+                int autoDelay = rnd.Next(1000, 3000);
+                logger.Debug($"API호출시도 {msg} {autoDelay}");
+                await Task.Delay(autoDelay);
 
                 //성공시에만 카운트( 실패= received1 - received2)
                 Context.IncrementCounter("akka.custom.received2");
@@ -50,7 +58,7 @@ namespace AkkaNetCore.Actors.LoadTest
 
         public ClusterWorkerPoolActor()
         {
-            int workCount = 300; //컴퓨터의 성능에따라 최대 능력치 조절가능합니다.
+            int workCount = 800; //컴퓨터의 성능에따라 최대 능력치 조절가능합니다.
             logger.Debug($"========== Create ApiWorkActor {workCount}");
 
             workActor = Context.ActorOf(Props.Create<ApiWorkActor>()

@@ -47,7 +47,7 @@ namespace AkkaNetCore.Actors.LoadTest
                     {
                         var factorials = source;
                         factorials                             
-                             .Throttle(elementPerSec, TimeSpan.FromSeconds(1), 100, ThrottleMode.Shaping)
+                             .Throttle(elementPerSec, TimeSpan.FromSeconds(1),10 , ThrottleMode.Shaping)
                              .RunForeach(obj => {
                                  var nowstr = DateTime.Now.ToString("mm:ss");
                                  if (obj is ApiCallSpec apiCallSpec)
