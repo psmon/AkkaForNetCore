@@ -19,7 +19,7 @@ namespace AkkaNetCore.Actors.LoadTest
             seqNo = 0;
 
             // 1초에 한번씩 데이터를 방류하는 배치액터를 생성합니다. -실시간 비동기 FSM 패턴이 사용됨
-            batchActor = Context.ActorOf(Props.Create(() => new BatchActor(1)));
+            batchActor = Context.ActorOf(Props.Create(() => new BatchActor(1)) );
             // TPS를 조절하는 조절기를 생성합니다.
             throttleLimitWork = Context.ActorOf(Props.Create(() => new ThrottleLimitWork()));
 

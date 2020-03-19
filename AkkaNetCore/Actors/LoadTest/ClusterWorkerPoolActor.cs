@@ -21,7 +21,7 @@ namespace AkkaNetCore.Actors.LoadTest
                 //시도 카운트
                 Context.IncrementCounter("akka.custom.received1");
 
-                logger.Debug($"API호출시도 {msg}");
+                //logger.Debug($"API호출시도 {msg}");
 
                 //성공시에만 카운트( 실패= received1 - received2)
                 Context.IncrementCounter("akka.custom.received2");
