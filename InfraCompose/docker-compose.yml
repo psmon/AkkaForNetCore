@@ -1,6 +1,19 @@
 version: '3.4'
 
 services:
+  lighthouse:
+    image: ${DOCKER_REGISTRY-}lighthouse
+    build:
+      context: .
+      dockerfile: ../LightHouse/Dockerfile
+    environment:
+      CLUSTER_IP: lighthouse
+      CLUSTER_PORT: 4053
+      CLUSTER_SEEDS: akka.tcp://actor-cluster@lighthouse:4053
+    ports:
+     - 4054:4053
+     - 9111:9110
+
   akkadb:
     image: mysql:5.7
     command: --default-authentication-plugin=mysql_native_password
