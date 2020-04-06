@@ -47,7 +47,7 @@ namespace AkkaNetCoreTest.Repositories
             Within(TimeSpan.FromSeconds(cutoff), () => {
                 EntityFrameworkManager.ContextFactory = context => new BatchRepository(appSettings);
                 using (var context = new BatchRepository(appSettings))
-                {
+                {                    
                     context.BulkInsertAsync(bulkItems_reseverd, options => {
                         options.BatchSize = batchSize;
                     }).Wait();
