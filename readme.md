@@ -94,9 +94,14 @@ more info :
 - Swashbuckle.AspNetCore : API문서 자동
 
 
-# 참고링크
+# JAVA AKKA
 
-- 자매품 JAVA AKKA를 이용하여 멀티플레이어 게임 만들기 :  http://wiki.webnori.com/display/webfr/Spring+with+Multiplayer+Game
+필자는, 먼저등장한 JVM버전의 AKKA를 먼저 사용하였으며 아래링크는 JAVA에서 액터를 사용하여
 
+간단한 멀티플레이어 웹게임(HTML5)을 만들어본 샘플입니다. 
+
+분산처리 컨셉이 동일하여 플랫폼을 넘나는데 큰 어려움이 없습니다.
+
+link :  http://wiki.webnori.com/display/webfr/Spring+with+Multiplayer+Game
 
 
