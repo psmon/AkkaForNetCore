@@ -93,3 +93,10 @@ more info :
 - Z.EntityFramework.Plus.EFCore : 10만건 데이터를 ORM을 이용함에도 5초만에 인입가능합니다. ORM은 느리지 않으며 다양한 벌크전략을 Actor와 연계하여 활용할수 있습니다.
 - Swashbuckle.AspNetCore : API문서 자동
 
+
+# 참고링크
+
+- 자매품 JAVA AKKA를 이용하여 멀티플레이어 게임 만들기 :  http://wiki.webnori.com/display/webfr/Spring+with+Multiplayer+Game
+
+
+
