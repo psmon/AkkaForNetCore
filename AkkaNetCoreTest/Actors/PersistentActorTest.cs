@@ -21,7 +21,7 @@ namespace AkkaNetCoreTest.Actors
 
         public void Setup()
         {
-            //여기서 관찰자는 고객이 받은 택배를 카운팅합니다.
+            //여기서 관찰자는 장바구니에 담긴 상품수를 검사할수 있습니다.
             probe = this.CreateTestProbe();
 
             persistentActor = Sys.ActorOf(Props.Create(() => new MyPersistentActor(probe)), "persistentActor");   
