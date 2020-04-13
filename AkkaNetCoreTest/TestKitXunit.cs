@@ -20,6 +20,10 @@ my-custom-mailbox {
     mailbox-type : ""AkkaNetCore.Models.Message.IssueTrackerMailbox, AkkaNetCore""
 }
 
+akka.persistence.max-concurrent-recoveries = 50 #복구 최고 개수
+akka.actor.default-mailbox.stash-capacity = 10000
+akka.persistence.internal-stash-overflow-strategy = ""akka.persistence.ThrowExceptionConfigurator""
+
 actor.deployment {
     /mymailbox {
         mailbox = my-custom-mailbox
