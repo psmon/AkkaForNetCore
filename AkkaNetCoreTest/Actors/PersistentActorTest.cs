@@ -34,6 +34,7 @@ namespace AkkaNetCoreTest.Actors
         {
             // usage
             int expectedCount = 2;
+
             //선택 장애 장바구니 이벤트
             Cmd cmd1 = new Cmd("장바구니를 물건을 담음+1");
             Cmd cmd2 = new Cmd("장바구니에 물건을 뺌-0");
@@ -49,14 +50,12 @@ namespace AkkaNetCoreTest.Actors
                 persistentActor.Tell("print"); //현재까지 액터가 가진 이벤트리스트를 재생합니다.
                 Assert.Equal(expectedCount, probe.ExpectMsg<int>());
 
-                //WaitForTest(cutoffSec);
-
                 //액터를 강제로 죽입니다.
                 persistentActor.Tell(Kill.Instance);
                 Task.Delay(500).Wait();
 
                 //시스템 셧다운후,재시작 시나리오
-                //액터를 다시생성하여, 액터가 복구되는지 확인합니다.
+                //액터를 다시생성하여, 액터가 가진 이벤트가 복구되는지 확인합니다.
                 persistentActor = Sys.ActorOf(Props.Create(() => new MyPersistentActor(probe)), "persistentActor");
                 persistentActor.Tell("print");
                 Assert.Equal(expectedCount, probe.ExpectMsg<int>());
