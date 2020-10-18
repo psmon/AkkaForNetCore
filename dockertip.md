@@ -4,8 +4,8 @@ docker network create --driver=bridge --subnet=172.19.0.0/16 devnet
 
 ## DataDog
 
-    DataDogÀº SassÇüÅÂÀÇ ¸ğ´ÏÅÍ¸µ Åø·Î
-    Å×½ºÆ®¸¦ À§ÇØ¼­¶ó¸é ¹«·á·Î »ç¿ë°¡´É (ÀÌº¥Æ®°¡ 1ÀÏ¸¸ º¸°üµÊ)
+    DataDogì€ Sassí˜•íƒœì˜ ëª¨ë‹ˆí„°ë§ íˆ´ë¡œ
+    í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•´ì„œë¼ë©´ ë¬´ë£Œë¡œ ì‚¬ìš©ê°€ëŠ¥ (ì´ë²¤íŠ¸ê°€ 1ì¼ë§Œ ë³´ê´€ë¨)
 
     docker run -d --name psmon-agent -v /var/run/docker.sock:/var/run/docker.sock:ro -v^
     /proc/:/host/proc/:ro -v /sys/fs/cgroup/:/host/sys/fs/cgroup:ro^
@@ -13,7 +13,7 @@ docker network create --driver=bridge --subnet=172.19.0.0/16 devnet
     -e DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true^
     -p 8125:8125/udp datadog/agent:7
 
-## ÇÁ·Î¸ŞÅ×¿ì½º
+## í”„ë¡œë©”í…Œìš°ìŠ¤
 
     # docker-compose.yml
     version: '2'

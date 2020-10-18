@@ -94,14 +94,9 @@ more info :
 - Swashbuckle.AspNetCore : API문서 자동
 
 
-# JVM AKKA
+## AkkaDotModule
 
-필자는, 먼저등장한 JVM버전의 AKKA를 먼저 사용하였으며 아래링크는 JAVA에서 액터를 사용하여
+여기서 실험되는 내용들은 AkkadotModule로 더 심플하게
+Nuget 모듈화가 진행되고 있습니다.
 
-간단한 멀티플레이어 웹게임(HTML5)을 만들어본 샘플입니다. 
-
-액터패턴에 익숙하다고 하면, 액터모델을 사용하는곳에서 플랫폼을 넘나는데 큰 어려움이 없습니다.
-
-link :  http://wiki.webnori.com/display/webfr/Spring+with+Multiplayer+Game
-
-
+link :https://github.com/psmon/AkkaDotModule 
